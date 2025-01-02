@@ -24,30 +24,33 @@ const PartyChat = ({item}: {item: any}) => {
 
   const listRef = useRef(null);
 
-  const chatRender = useCallback(({item}) => {
-    return (
-      <View
-        style={[
-          styles.message,
-          item.player_id === user.player.id
-            ? {alignItems: 'flex-end'}
-            : {alignItems: 'flex-start'},
-        ]}>
-        {/* {item.player_id !== user.player.id && ( */}
-        <CText color={colors.white}>{item.name}</CText>
-        {/* )} */}
+  const chatRender = useCallback(
+    ({item}) => {
+      return (
         <View
           style={[
-            styles.contents,
-            // item.user_id === 1
-            //   ? {alignItems: 'flex-end'}
-            //   : {alignItems: 'flex-start'},
+            styles.message,
+            item.player_id === user.player.id
+              ? {alignItems: 'flex-end'}
+              : {alignItems: 'flex-start'},
           ]}>
-          <CText color={colors.white}>{item.contents}</CText>
+          {/* {item.player_id !== user.player.id && ( */}
+          <CText color={colors.white}>{item.name}</CText>
+          {/* )} */}
+          <View
+            style={[
+              styles.contents,
+              // item.user_id === 1
+              //   ? {alignItems: 'flex-end'}
+              //   : {alignItems: 'flex-start'},
+            ]}>
+            <CText color={colors.white}>{item.contents}</CText>
+          </View>
         </View>
-      </View>
-    );
-  }, []);
+      );
+    },
+    [user],
+  );
 
   const onChangeText = (value: string) => {
     setText(value);

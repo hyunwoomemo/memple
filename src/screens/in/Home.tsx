@@ -10,7 +10,7 @@ import Screen from '../../components/common/Screen';
 import {useQuery} from '@tanstack/react-query';
 import {partyApi} from '../../api';
 import CText from '../../components/common/CText';
-import {colors} from '../../style';
+import {colors, globalStyles} from '../../style';
 import {useAtomValue} from 'jotai';
 import {userAtom} from '../../store/user/atom';
 
@@ -28,6 +28,23 @@ interface IParty {
   title: string;
   player_count: number;
 }
+
+const Side = navigation => (
+  <View style={globalStyles.flexRow}>
+    <TouchableOpacity style={styles.itemContainer}>
+      <CText size={24} color={colors.white}>
+        🔍
+      </CText>
+    </TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => navigation.push('AddParty')}
+      style={styles.itemContainer}>
+      <CText size={24} color={colors.white}>
+        ➕
+      </CText>
+    </TouchableOpacity>
+  </View>
+);
 
 const Home = ({route, navigation}) => {
   const user = useAtomValue(userAtom);
@@ -50,7 +67,7 @@ const Home = ({route, navigation}) => {
         Alert.alert('캐릭터를 등록해주세요');
       }
     },
-    [user?.player],
+    [user?.player, navigation],
   );
 
   const renderItem = useCallback(
@@ -101,7 +118,7 @@ const Home = ({route, navigation}) => {
   );
 
   return (
-    <Screen name="파티 목록">
+    <Screen name="파티 목록" side={() => Side(navigation)}>
       <CText color={colors.white}>{user?.player?.name}</CText>
       <View style={styles.container}>
         {/* <CText bold size={24} color={colors.gray}>
@@ -168,5 +185,13 @@ const styles = StyleSheet.create({
   },
   playerCount: {
     marginLeft: 'auto',
+  },
+  itemContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 5,
+    backgroundColor: colors.buttonBackground,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

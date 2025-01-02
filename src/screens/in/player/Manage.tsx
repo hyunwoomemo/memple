@@ -10,7 +10,7 @@ import {
 import Screen from '../../../components/common/Screen';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {playerApi} from '../../../api';
-import {colors} from '../../../style';
+import {colors, flexRow, globalStyles} from '../../../style';
 import CText from '../../../components/common/CText';
 import CButton from '../../../components/common/CButton';
 import {useSetAtom} from 'jotai';
@@ -45,7 +45,11 @@ const Manage = () => {
     return (
       <>
         <View style={styles.item}>
-          <CText color={colors.white}>{item.name}</CText>
+          <View style={globalStyles.flexRow}>
+            <CText color={colors.white}>{item.name}</CText>
+            <CText color={colors.gray}>{item.character_job}</CText>
+            <CText color={colors.gray}>{item.character_level}</CText>
+          </View>
           <CButton
             title={item.status ? '선택 해제' : '선택'}
             onPress={() => handleSelect(item.id, item.ocid, item)}
@@ -67,6 +71,7 @@ const Manage = () => {
         </View>
       ) : (
         <FlatList
+          contentContainerStyle={styles.list}
           data={data.list}
           keyExtractor={item => item.id.toString()}
           renderItem={renderItem}
@@ -88,5 +93,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  list: {
+    gap: 10,
   },
 });

@@ -1,3 +1,5 @@
+import {StyleSheet} from 'react-native';
+
 export const colors = {
   white: '#F5F5F5',
   black: '#000000',
@@ -23,3 +25,11 @@ export const colors = {
   inputBackground: '#212121',
   buttonBackground: '#212121',
 };
+
+export const globalStyles = StyleSheet.create({
+  flexRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+});

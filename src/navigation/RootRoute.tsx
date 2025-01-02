@@ -53,7 +53,7 @@ const RootRoute = () => {
           screenOptions={{
             headerShown: false,
           }}>
-          {Object.keys(user.info).length > 0 ? (
+          {user?.info && Object.keys(user?.info).length > 0 ? (
             <Stack.Screen name="InRoute" component={InRoute} />
           ) : (
             <Stack.Screen name="OutRoute" component={OutRoute} />

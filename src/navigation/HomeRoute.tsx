@@ -1,27 +1,20 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {useCallback, useEffect, useLayoutEffect} from 'react';
+import React from 'react';
 import Home from '../screens/in/Home';
-import PartyDetail from '../screens/in/party/PartyMain';
 import {colors} from '../style';
 import PartyDetailRoute from './PartyDetailRoute';
-import {useSetCurrentScreen} from '../hooks/useSetCurrentScreen';
-import {
-  getFocusedRouteNameFromRoute,
-  useFocusEffect,
-  useRoute,
-} from '@react-navigation/native';
-import {useSetAtom} from 'jotai';
-import {currentScreenAtom} from '../store/screen/atom';
+import AddParty from '../screens/in/party/AddParty';
 
 type RootStackParamList = {
   Home: undefined;
-  PartyDetailRoute: {id: any};
+  PartyDetailRoute: {item: any};
+  AddParty: undefined;
   // PartyDetailRoute: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const HomeRoute = ({route}) => {
+const HomeRoute = () => {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -29,6 +22,14 @@ const HomeRoute = ({route}) => {
         contentStyle: {backgroundColor: colors.background},
       }}>
       <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen
+        name="AddParty"
+        component={AddParty}
+        options={{
+          presentation: 'modal',
+          // animationMatchesGesture: true,
+        }}
+      />
       <Stack.Screen name="PartyDetailRoute" component={PartyDetailRoute} />
     </Stack.Navigator>
   );
