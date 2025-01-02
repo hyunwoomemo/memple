@@ -11,9 +11,7 @@ import {useQuery} from '@tanstack/react-query';
 import {partyApi} from '../../api';
 import CText from '../../components/common/CText';
 import {colors} from '../../style';
-import {useAtomValue, useSetAtom} from 'jotai';
-import {currentScreenAtom} from '../../store/screen/atom';
-import {useFocusEffect} from '@react-navigation/native';
+import {useAtomValue} from 'jotai';
 import {userAtom} from '../../store/user/atom';
 
 interface IParty {

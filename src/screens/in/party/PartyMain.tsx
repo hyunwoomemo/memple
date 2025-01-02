@@ -127,32 +127,39 @@ const PartyMain = ({
         <View style={styles.players}>
           <View style={styles.player}>
             <View style={styles.gap5}>
-              <View style={styles.flexRow}>
+              {data?.list.map(v => {
+                return (
+                  <View key={v.ocid} style={styles.player}>
+                    <View style={styles.flexRow}>
+                      <CText color={colors.white}>{v.name}</CText>
+                      <CText color={colors.gray}>{v.character_job}</CText>
+                      <CText color={colors.gray}>Lv.{v.character_level}</CText>
+                      {/* <CText color={colors.lightRed}>{v.exp}</CText> */}
+                    </View>
+                    <View style={styles.flexRow}>
+                      <CText size={14} color={colors.lightGreen}>
+                        혈반
+                      </CText>
+                      <CText size={14} color={colors.lightGreen}>
+                        룬
+                      </CText>
+                      <CText size={14} color={colors.darkGray}>
+                        자석펫
+                      </CText>
+                    </View>
+                  </View>
+                );
+              })}
+              {/* <View style={styles.flexRow}>
                 <CText color={colors.white}>♚</CText>
                 <CText color={colors.gray}>팬텀</CText>
                 <CText color={colors.white}>이쟌</CText>
                 <CText color={colors.white}>Lv.244</CText>
                 <CText color={colors.lightRed}>115</CText>
-              </View>
-              {elapsedTime && (
-                <CText size={14} color={colors.gray}>
-                  외출: {elapsedTime}
-                </CText>
-              )}
-            </View>
-            <View style={styles.flexRow}>
-              <CText size={14} color={colors.lightGreen}>
-                혈반
-              </CText>
-              <CText size={14} color={colors.lightGreen}>
-                룬
-              </CText>
-              <CText size={14} color={colors.darkGray}>
-                자석펫
-              </CText>
+              </View> */}
             </View>
           </View>
-          <View style={styles.player}>
+          {/* <View style={styles.player}>
             <View style={styles.flexRow}>
               <CText color={colors.gray}>블래스터</CText>
               <CText color={colors.white}>블래</CText>
@@ -189,7 +196,7 @@ const PartyMain = ({
                 자석펫
               </CText>
             </View>
-          </View>
+          </View> */}
         </View>
         <ScrollView contentContainerStyle={styles.notice}>
           <CText color={colors.white}>공지사항</CText>
@@ -232,9 +239,10 @@ const styles = StyleSheet.create({
   },
   player: {
     flexDirection: 'row',
+    width: '100%',
     // flex: 1,
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: 10,
     padding: 5,
     // marginVertical: 5,

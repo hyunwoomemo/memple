@@ -9,7 +9,8 @@ const Screen: React.FC<{
   name?: string;
   back?: boolean;
   nameSize?: number;
-}> = ({children, name, back, nameSize = 24}) => {
+  side?: () => React.ReactNode;
+}> = ({children, name, back, nameSize = 24, side}) => {
   const navigation = useNavigation();
 
   return (
@@ -29,15 +30,17 @@ const Screen: React.FC<{
             </View>
           ) : undefined}
           <View />
+          {side && side()}
         </View>
       ) : (
-        <>
+        <View style={styles.flexRow}>
           {name ? (
             <CText bold color={colors.white} size={nameSize}>
               {name}
             </CText>
           ) : undefined}
-        </>
+          {side && side()}
+        </View>
       )}
       {children}
     </View>

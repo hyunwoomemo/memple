@@ -25,7 +25,6 @@ const PartyChat = ({item}: {item: any}) => {
   const listRef = useRef(null);
 
   const chatRender = useCallback(({item}) => {
-    console.log('12312312313', item);
     return (
       <View
         style={[
@@ -76,7 +75,7 @@ const PartyChat = ({item}: {item: any}) => {
     <>
       <KeyboardAvoidingView
         style={styles.keyboardView}
-        keyboardVerticalOffset={60}
+        keyboardVerticalOffset={170}
         behavior={Platform.OS === 'ios' ? 'height' : 'undefined'}>
         <FlatList
           ref={listRef}

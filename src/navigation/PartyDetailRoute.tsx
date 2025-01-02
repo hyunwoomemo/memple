@@ -38,7 +38,7 @@ const PartyDetailRoute = ({route}: {route: {params: {item: any}}}) => {
           // contentStyle: {backgroundColor: colors.background},
           tabBarStyle: {backgroundColor: colors.background},
           tabBarLabelStyle: {color: colors.white},
-          tabBarIndicatorStyle: {backgroundColor: colors.darkRed},
+          tabBarIndicatorStyle: {backgroundColor: colors.lightRed},
           sceneStyle: {flex: 1, backgroundColor: colors.background},
         }}>
         <Tab.Screen
