@@ -20,18 +20,45 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao5fa84b90366b1c13f5dead88dc8071ae</string>
+			</array>
+		</dict>
+	</array>
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSExceptionDomains</key>
+    <dict>
+        <key>15.164.212.90</key>
+        <dict>
+            <key>NSIncludesSubdomains</key>
+            <true/>
+            <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+            <true/>
+            <key>NSTemporaryExceptionMinimumTLSVersion</key>
+            <string>TLSv1.0</string>
+        </dict>
+    </dict>
+</dict>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>KAKAO_APP_KEY</key>
+	<string>5fa84b90366b1c13f5dead88dc8071ae</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakao5fa84b90366b1c13f5dead88dc8071ae</string>
+		<string>kakaokompassauth</string>
+		<string>storykompassauth</string>
+		<string>kakaolink</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
-		<key>NSAllowsArbitraryLoads</key>
-		<false/>
-		<key>NSAllowsLocalNetworking</key>
-		<true/>
-	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UILaunchStoryboardName</key>
@@ -47,6 +74,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 </dict>
 </plist>
