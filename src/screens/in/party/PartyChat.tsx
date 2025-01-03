@@ -11,9 +11,10 @@ import Input from '../../../components/common/Input';
 import {useAtomValue} from 'jotai';
 import {messagesAtom} from '../../../store/party/atom';
 import CText from '../../../components/common/CText';
-import {colors} from '../../../style';
+import {colors, globalStyles} from '../../../style';
 import {useSocket} from '../../../hooks/useSocket';
 import {userAtom} from '../../../store/user/atom';
+import moment from 'moment';
 
 const PartyChat = ({item}: {item: any}) => {
   const {socket} = useSocket();
@@ -35,16 +36,31 @@ const PartyChat = ({item}: {item: any}) => {
               : {alignItems: 'flex-start'},
           ]}>
           {/* {item.player_id !== user.player.id && ( */}
-          <CText color={colors.white}>{item.name}</CText>
+          {item.showName && <CText color={colors.gray}>{item.name}</CText>}
           {/* )} */}
           <View
             style={[
-              styles.contents,
-              // item.user_id === 1
-              //   ? {alignItems: 'flex-end'}
-              //   : {alignItems: 'flex-start'},
+              globalStyles.flexRow,
+              item.player_id === user.player.id
+                ? {flexDirection: 'row-reverse'}
+                : {flexDirection: 'row'},
             ]}>
-            <CText color={colors.white}>{item.contents}</CText>
+            <View
+              style={[
+                styles.contents,
+                // item.user_id === 1
+                //   ? {alignItems: 'flex-end'}
+                //   : {alignItems: 'flex-start'},
+              ]}>
+              <CText color={colors.white}>{item.contents}</CText>
+            </View>
+            {item.showTime && (
+              <View style={styles.created_at}>
+                <CText color={colors.gray} size={12}>
+                  {moment(item.created_at).format('a HH:mm')}
+                </CText>
+              </View>
+            )}
           </View>
         </View>
       );
@@ -109,16 +125,18 @@ const styles = StyleSheet.create({
     padding: 7,
     // backgroundColor: colors.gray,
     gap: 10,
+    paddingBottom: 20,
   },
 
   contents: {
-    padding: 5,
+    padding: 10,
+    // minWidth: 50,
     // justifyContent: 'flex-end',
     // textAlign: 'right',
     // paddingHorizontal: 20,
     // minWidth: 50,
     // paddingHorizontal: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     // width: '100%',
     // marginVertical: 5,
     backgroundColor: colors.inputBackground,
@@ -126,8 +144,12 @@ const styles = StyleSheet.create({
     // justifyContent: 'flex-start',
     // textAlign: 'right',
     borderRadius: 5,
+    maxWidth: '80%',
   },
   keyboardView: {
     flex: 1,
+  },
+  created_at: {
+    alignSelf: 'flex-end',
   },
 });
