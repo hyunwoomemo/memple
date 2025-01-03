@@ -18,6 +18,7 @@ import {userAtom} from '../../../store/user/atom';
 import Input from '../../../components/common/Input';
 import {useQuery} from '@tanstack/react-query';
 import moment from 'moment';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const ResultItem = ({title, contents}: {title: string; contents: string}) => {
   return (
@@ -95,7 +96,7 @@ const Register = () => {
       name: playerData.character_name,
       character_job: playerData.character_job_name,
       level: playerData.character_level,
-      world: playerData.world_name,
+      world_name: playerData.world_name,
     });
 
     // setPlayerId(res);
@@ -119,54 +120,55 @@ const Register = () => {
 
   return (
     <Screen name="캐릭터 등록" back>
-      {!ocid ? (
-        <>
-          <KeyboardAvoidingView
-            style={styles.container}
-            keyboardVerticalOffset={60}
-            behavior={Platform.OS === 'ios' ? 'height' : 'undefined'}>
-            <View style={styles.inputWrapper}>
-              <Input
-                placeholder="서버"
-                onChangeText={text =>
-                  setValues(prev => ({...prev, server: text}))
-                }
-              />
-              <Input
-                placeholder="유저 이름"
-                onChangeText={text =>
-                  setValues(prev => ({...prev, name: text}))
-                }
-              />
+      <KeyboardAwareScrollView contentContainerStyle={styles.keyboardContainer}>
+        {!ocid ? (
+          <>
+            <View style={styles.container}>
+              <View style={styles.inputWrapper}>
+                <Input
+                  placeholder="서버"
+                  onChangeText={text =>
+                    setValues(prev => ({...prev, server: text}))
+                  }
+                />
+                <Input
+                  placeholder="유저 이름"
+                  onChangeText={text =>
+                    setValues(prev => ({...prev, name: text}))
+                  }
+                />
+              </View>
+              <View style={styles.buttonWrapper}>
+                <CButton title="검색" onPress={handleRegister} />
+              </View>
             </View>
-            <View style={styles.buttonWrapper}>
-              <CButton title="검색" onPress={handleRegister} />
-            </View>
-          </KeyboardAvoidingView>
-        </>
-      ) : (
-        <>
-          {!playerData ? (
-            <View style={[{flex: 1}, StyleSheet.absoluteFillObject]}>
-              <ActivityIndicator size={48} color={colors.darkRed} />
-            </View>
-          ) : (
-            <View style={styles.registerContainer}>
-              {/* <View>
+          </>
+        ) : (
+          <>
+            {!playerData ? (
+              <View style={[{flex: 1}, StyleSheet.absoluteFillObject]}>
+                <ActivityIndicator size={48} color={colors.darkRed} />
+              </View>
+            ) : (
+              <View style={styles.registerContainer}>
+                {/* <View>
           <CText color={colors.white}>직업</CText>
           <CText color={colors.white}>{playerInfo.character_job_name}</CText>
           </View> */}
-              <ResultItem
-                title={'직업'}
-                contents={playerData.character_job_name}
-              />
-              <ResultItem
-                title={'레벨'}
-                contents={playerData.character_level}
-              />
-              <ResultItem title={'서버'} contents={playerData.world_name} />
-              <ResultItem title={'이름'} contents={playerData.character_name} />
-              {/* <ResultItem
+                <ResultItem
+                  title={'직업'}
+                  contents={playerData.character_job_name}
+                />
+                <ResultItem
+                  title={'레벨'}
+                  contents={playerData.character_level}
+                />
+                <ResultItem title={'서버'} contents={playerData.world_name} />
+                <ResultItem
+                  title={'이름'}
+                  contents={playerData.character_name}
+                />
+                {/* <ResultItem
             title={'로그인'}
             contents={moment(playerInfo.character_date_last_login).format(
               'lll',
@@ -178,13 +180,14 @@ const Register = () => {
               'lll',
             )}
           /> */}
-              <View style={styles.registerBtn}>
-                <CButton title="등록" onPress={handleRegisterCharacter} />
+                <View style={styles.registerBtn}>
+                  <CButton title="등록" onPress={handleRegisterCharacter} />
+                </View>
               </View>
-            </View>
-          )}
-        </>
-      )}
+            )}
+          </>
+        )}
+      </KeyboardAwareScrollView>
     </Screen>
   );
 };
@@ -227,5 +230,9 @@ const styles = StyleSheet.create({
   registerBtn: {
     marginTop: 'auto',
     marginBottom: 20,
+  },
+  keyboardContainer: {
+    justifyContent: 'center',
+    flex: 1,
   },
 });
