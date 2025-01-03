@@ -37,8 +37,13 @@ export const playerApi = {
   setInfo: data => {
     return request.post('/player/setInfo', data);
   },
-  register: ({ocid, name, character_job}) => {
-    return request.post('/player/register', {ocid, name, character_job});
+  register: ({ocid, name, character_job, world_name}) => {
+    return request.post('/player/register', {
+      ocid,
+      name,
+      character_job,
+      world_name,
+    });
   },
   myPlayers: () => {
     return request.get('/player/my');
@@ -57,6 +62,9 @@ export const partyApi = {
   },
   getPartyPlayer: ({party_id}: {party_id: number}) => {
     return request.get(`/party/player/${party_id}`);
+  },
+  addParty: data => {
+    return request.post('/party/add', data);
   },
 };
 
