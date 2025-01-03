@@ -75,7 +75,7 @@ const Home = ({route, navigation}) => {
       return (
         <TouchableOpacity onPress={() => onPress(item)} style={styles.item}>
           <View>
-            <CText bold color={colors.lightRed}>
+            <CText bold color={colors.primary}>
               {item.region}
             </CText>
             <View style={styles.divider} />
@@ -88,7 +88,7 @@ const Home = ({route, navigation}) => {
                 <CText size={13} color={colors.white}>
                   exp
                 </CText>
-                <CText size={13} color={colors.lightRed}>
+                <CText size={13} color={colors.primary}>
                   {item.exp_condition ? `${item.exp_condition} ↑` : '무관'}
                 </CText>
               </View>
@@ -99,7 +99,7 @@ const Home = ({route, navigation}) => {
                 <CText size={13} color={colors.white}>
                   level
                 </CText>
-                <CText size={13} color={colors.lightRed}>
+                <CText size={13} color={colors.primary}>
                   {item.level_condition ? `${item.level_condition} ↑` : '무관'}
                 </CText>
               </View>

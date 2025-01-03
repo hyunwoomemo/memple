@@ -4,6 +4,8 @@ import {useEffect} from 'react';
 import {useQueryClient} from '@tanstack/react-query';
 import {useAtom} from 'jotai';
 import {partyAtom} from '../store/party/atom';
+import moment from 'moment';
+import {parseMessages} from '../utils/parseMessages';
 
 let socket: Socket | null = null;
 interface SocketOptions {
@@ -39,12 +41,18 @@ export const useSocket = () => {
 
       socket.on('messages', (data: any) => {
         console.log('messages', data);
-
-        setParty(prev => ({...prev, messages: data}));
+        try {
+          setParty(prev => ({...prev, messages: parseMessages(data)}));
+        } catch (err) {
+          console.error('err', err);
+        }
       });
 
       socket.on('message', (data: any) => {
-        setParty(prev => ({...prev, messages: [data, ...prev.messages]}));
+        setParty(prev => ({
+          ...prev,
+          messages: parseMessages([data, ...prev.messages]),
+        }));
       });
 
       socket.on('partyPlayer', (data: any) => {
