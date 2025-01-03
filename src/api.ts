@@ -61,4 +61,4 @@ export const partyApi = {
 };
 
 // 스카니아
-// 블래
+// 디오이

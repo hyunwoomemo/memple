@@ -42,6 +42,7 @@ const Manage = () => {
   };
 
   const renderItem = ({item}) => {
+    console.log('item', item);
     return (
       <>
         <View style={styles.item}>
