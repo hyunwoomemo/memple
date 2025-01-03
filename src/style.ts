@@ -10,7 +10,7 @@ export const colors = {
   lightBlue: '#5e92f3',
   darkBlue: '#003c8f',
   red: '#dd2c00',
-  lightRed: '#ff6434',
+  primary: 'tomato',
   darkRed: '#c30000',
   yellow: '#ffc400',
   lightYellow: '#fff64f',

@@ -134,7 +134,7 @@ const PartyMain = ({
                       <CText color={colors.white}>{v.name}</CText>
                       <CText color={colors.gray}>{v.character_job}</CText>
                       <CText color={colors.gray}>Lv.{v.character_level}</CText>
-                      {/* <CText color={colors.lightRed}>{v.exp}</CText> */}
+                      {/* <CText color={colors.primary}>{v.exp}</CText> */}
                     </View>
                     <View style={styles.flexRow}>
                       <CText size={14} color={colors.lightGreen}>
@@ -155,7 +155,7 @@ const PartyMain = ({
                 <CText color={colors.gray}>팬텀</CText>
                 <CText color={colors.white}>이쟌</CText>
                 <CText color={colors.white}>Lv.244</CText>
-                <CText color={colors.lightRed}>115</CText>
+                <CText color={colors.primary}>115</CText>
               </View> */}
             </View>
           </View>
@@ -164,7 +164,7 @@ const PartyMain = ({
               <CText color={colors.gray}>블래스터</CText>
               <CText color={colors.white}>블래</CText>
               <CText color={colors.white}>Lv.247</CText>
-              <CText color={colors.lightRed}>121</CText>
+              <CText color={colors.primary}>121</CText>
             </View>
             <View style={styles.flexRow}>
               <CText size={14} color={colors.lightGreen}>
@@ -183,7 +183,7 @@ const PartyMain = ({
               <CText color={colors.gray}>소울마스터</CText>
               <CText color={colors.white}>인플루언서</CText>
               <CText color={colors.white}>Lv.241</CText>
-              <CText color={colors.lightRed}>117</CText>
+              <CText color={colors.primary}>117</CText>
             </View>
             <View style={styles.flexRow}>
               <CText size={14} color={colors.lightGreen}>
