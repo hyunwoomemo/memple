@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import {View, TextInput, Animated, StyleSheet} from 'react-native';
 import CText from './CText'; // CText 컴포넌트 임포트
 import {colors} from '../../style';
+import {useTheme} from '../../hooks/useTheme';
 
 interface InputProps {
   ref?: React.RefObject<TextInput>;
@@ -22,6 +23,9 @@ interface InputProps {
     | 'numeric'
     | 'email-address'
     | 'phone-pad';
+  returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
+  returnKeyLabel?: string;
+  enterKeyHint?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -36,8 +40,13 @@ const Input: React.FC<InputProps> = ({
   label,
   flex,
   center,
+  returnKeyLabel,
+  returnKeyType,
+  enterKeyHint,
   ...res
 }) => {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const [isFocused, setIsFocused] = useState(false);
   const labelAnimation = useRef(new Animated.Value(0)).current;
 
@@ -83,7 +92,7 @@ const Input: React.FC<InputProps> = ({
             labelStyle,
             center && styles.centerAligned,
           ]}>
-          <CText size={16} color={colors.gray}>
+          <CText size={16} color={theme.gray}>
             {label}
           </CText>
         </Animated.View>
@@ -91,10 +100,12 @@ const Input: React.FC<InputProps> = ({
           ref={ref}
           keyboardAppearance="dark"
           placeholder={!isFocused ? placeholder : undefined}
-          placeholderTextColor={colors.gray}
+          placeholderTextColor={theme.gray}
           style={[
             styles.withLabelInput,
-            {borderColor: isFocused ? colors.primary : colors.darkGray},
+            {
+              borderColor: isFocused ? theme.primary : theme.darkGray,
+            },
             center && styles.centeredInput,
           ]}
           secureTextEntry={secureTextEntry}
@@ -107,6 +118,9 @@ const Input: React.FC<InputProps> = ({
           spellCheck={false}
           autoCorrect={false}
           autoCapitalize={'none'}
+          returnKeyType={returnKeyType}
+          returnKeyLabel={returnKeyLabel}
+          enablesReturnKeyAutomatically
           {...res}
         />
       </View>
@@ -119,7 +133,7 @@ const Input: React.FC<InputProps> = ({
       ref={ref}
       placeholder={placeholder}
       keyboardAppearance="dark"
-      placeholderTextColor={colors.gray}
+      placeholderTextColor={theme.gray}
       style={styles.backgroundInput}
       secureTextEntry={secureTextEntry}
       onChangeText={onChangeText}
@@ -129,6 +143,8 @@ const Input: React.FC<InputProps> = ({
       autoCapitalize={'none'}
       value={value}
       submitBehavior={submitBehavior}
+      enablesReturnKeyAutomatically
+      enterKeyHint="send"
       {...res}
     />
   );
@@ -136,39 +152,39 @@ const Input: React.FC<InputProps> = ({
 
 export default Input;
 
-const styles = StyleSheet.create({
-  backgroundInput: {
-    backgroundColor: colors.inputBackground,
-    color: colors.white,
-    borderRadius: 10,
-    fontSize: 18,
-    padding: 15,
-    paddingVertical: 15,
-    margin: 10,
-  },
-  withLabelInputContainer: {},
-  withLabelInput: {
-    margin: 5,
-    padding: 5,
-    borderBottomWidth: 1,
-    borderColor: colors.gray,
-    fontSize: 20,
-    color: colors.white,
-  },
-  labelContainer: {
-    paddingHorizontal: 5,
-    marginHorizontal: 5,
-  },
-  centerAligned: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  centeredInput: {
-    width: '100%',
-    justifyContent: 'center',
-    textAlign: 'center',
-  },
-  alignCenter: {
-    alignItems: 'center',
-  },
-});
+const createStyles = (theme: any) => {
+  return StyleSheet.create({
+    backgroundInput: {
+      backgroundColor: theme.backgroundDarker,
+      color: theme.white,
+      borderRadius: 15,
+      padding: 15,
+      paddingVertical: 15,
+      margin: 10,
+    },
+    withLabelInputContainer: {},
+    withLabelInput: {
+      margin: 5,
+      padding: 5,
+      borderBottomWidth: 1,
+      borderColor: theme.gray,
+      color: theme.white,
+    },
+    labelContainer: {
+      paddingHorizontal: 5,
+      marginHorizontal: 5,
+    },
+    centerAligned: {
+      width: '100%',
+      alignItems: 'center',
+    },
+    centeredInput: {
+      width: '100%',
+      justifyContent: 'center',
+      textAlign: 'center',
+    },
+    alignCenter: {
+      alignItems: 'center',
+    },
+  });
+};

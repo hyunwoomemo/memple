@@ -1,17 +1,15 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {colors} from '../../style';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import CText from './CText';
 import {getFocusedRouteNameFromRoute, useRoute} from '@react-navigation/native';
-import {useAtomValue} from 'jotai';
-import {currentScreenAtom} from '../../store/screen/atom';
+import {useTheme} from '../../hooks/useTheme';
 
 interface Route {
   key: string;
   name: string;
 }
 
-interface CustomBottmTabProps {
+interface CustomBottomTabProps {
   state: {
     routes: Route[];
     index: number;
@@ -19,9 +17,11 @@ interface CustomBottmTabProps {
   navigation: any;
 }
 
-const CustomBottmTab: React.FC<CustomBottmTabProps> = props => {
+const CustomBottomTab: React.FC<CustomBottomTabProps> = props => {
   const route = useRoute();
   console.log('zxc', getFocusedRouteNameFromRoute(route));
+  const theme = useTheme();
+  const styles = createStyles(theme);
 
   if (getFocusedRouteNameFromRoute(route) === 'PartyDetailRoute') {
     return;
@@ -40,6 +40,12 @@ const CustomBottmTab: React.FC<CustomBottmTabProps> = props => {
               ? options.title
               : route.name;
 
+          const Icon = options.tabBarIcon;
+
+          const getIsFocused = () => {
+            return props.state.index === index;
+          };
+
           const onPress = () => {
             const event = props.navigation.emit({
               type: 'tabPress',
@@ -47,19 +53,21 @@ const CustomBottmTab: React.FC<CustomBottmTabProps> = props => {
               canPreventDefault: true,
             });
 
-            const getIsFocused = () => {
-              return props.state.index === index;
-            };
-
             if (!getIsFocused() && !event.defaultPrevented) {
               props.navigation.navigate(route.name);
             }
           };
 
           return (
-            <TouchableOpacity onPress={onPress} key={route.key}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={onPress}
+              key={route.key}>
               {/* <Text style={styles.text}>{route.name}</Text> */}
-              <CText bold size={16} color={colors.white}>
+              <Icon focused={getIsFocused()} />
+              <CText
+                size={14}
+                color={getIsFocused() ? theme.primary : theme.text}>
                 {label}
               </CText>
             </TouchableOpacity>
@@ -69,19 +77,33 @@ const CustomBottmTab: React.FC<CustomBottmTabProps> = props => {
   );
 };
 
-export default CustomBottmTab;
+export default CustomBottomTab;
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 60,
-    backgroundColor: colors.background,
-    borderTopWidth: 1,
-    borderTopColor: colors.gray,
-  },
-  text: {
-    color: colors.white,
-  },
-});
+const createStyles = theme => {
+  return StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      // height: 60,
+      backgroundColor: theme.bottomTabBg,
+      borderTopRightRadius: 30,
+      borderTopLeftRadius: 30,
+      paddingTop: 10,
+      marginTop: 10,
+      // flex: 1,
+    },
+    text: {
+      color: theme.text,
+    },
+    button: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      // backgroundColor: 'red',
+      padding: 10,
+      height: 60,
+      gap: 5,
+    },
+  });
+};

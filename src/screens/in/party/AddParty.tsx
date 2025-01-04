@@ -27,7 +27,6 @@ const AddParty = () => {
   const user = useAtomValue(userAtom);
   const queryClient = useQueryClient();
 
-
   const handleChangeText = (type: keyof Values, value: string | number) => {
     if (type === 'minLevel') {
       if (values.maxLevel !== undefined && Number(value) > values.maxLevel) {
@@ -58,7 +57,6 @@ const AddParty = () => {
       world_name: user.player.world,
       creator_id: user.player.id,
     });
-
 
     if (res.success) {
       queryClient.invalidateQueries('partyList');
@@ -93,7 +91,7 @@ const AddParty = () => {
             center
             keyboardType="number-pad"
           />
-          <CText color={colors.white} size={20}>
+          <CText color={colors.dark.white} size={20}>
             ~
           </CText>
           <Input

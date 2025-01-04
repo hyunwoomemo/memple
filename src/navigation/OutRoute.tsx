@@ -10,7 +10,7 @@ const OutRoute = () => {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        contentStyle: {backgroundColor: colors.background},
+        contentStyle: {backgroundColor: colors.dark.background},
       }}>
       <Stack.Screen name="Login" component={Login} />
     </Stack.Navigator>

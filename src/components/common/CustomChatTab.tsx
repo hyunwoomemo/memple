@@ -39,7 +39,7 @@ const CustomChatTab: React.FC<CustomChatTabProps> = props => {
         return (
           <TouchableOpacity onPress={onPress} key={route.key}>
             {/* <Text style={styles.text}>{route.name}</Text> */}
-            <CText bold size={16} color={colors.white}>
+            <CText bold size={16} color={colors.dark.white}>
               {route.name === 'PartyMain' ? '정보' : '채팅'}
             </CText>
           </TouchableOpacity>
@@ -57,11 +57,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     height: 60,
-    backgroundColor: colors.background,
+    backgroundColor: colors.dark.background,
     borderTopWidth: 1,
-    borderTopColor: colors.gray,
+    borderTopColor: colors.dark.gray,
   },
   text: {
-    color: colors.white,
+    color: colors.dark.white,
   },
 });

@@ -69,7 +69,9 @@ axios.interceptors.response.use(
           // await setToken(newToken);
           setStorage('token', newToken);
           setStorage('refresh_token', newRefreshToken);
-          axios.defaults.headers.Authorization = `Bearer ${newToken}`;
+          axios.defaults.headers.common.Authorization = `Bearer ${newToken}`;
+
+          // originalRequest의 헤더 업데이트
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return axios(originalRequest);
         } catch (refreshError) {

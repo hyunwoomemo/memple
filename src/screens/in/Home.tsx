@@ -2,6 +2,7 @@ import React, {useCallback} from 'react';
 import {
   Alert,
   FlatList,
+  Image,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -13,6 +14,14 @@ import CText from '../../components/common/CText';
 import {colors, globalStyles} from '../../style';
 import {useAtomValue} from 'jotai';
 import {userAtom} from '../../store/user/atom';
+import CButton from '../../components/common/CButton';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import PartyList from '../../components/party/PartyList';
+import {useTheme} from '../../hooks/useTheme';
+import Icon from '@react-native-vector-icons/ionicons';
+import MyParty from '../../components/home/MyParty';
+import PlayerItem from '../../components/player/PlayerItem';
 
 interface IParty {
   channel: number;
@@ -29,169 +38,224 @@ interface IParty {
   player_count: number;
 }
 
-const Side = navigation => (
-  <View style={globalStyles.flexRow}>
-    <TouchableOpacity style={styles.itemContainer}>
-      <CText size={24} color={colors.white}>
-        🔍
-      </CText>
-    </TouchableOpacity>
-    <TouchableOpacity
-      onPress={() => navigation.push('AddParty')}
-      style={styles.itemContainer}>
-      <CText size={24} color={colors.white}>
-        ➕
-      </CText>
-    </TouchableOpacity>
-  </View>
-);
+interface Player {
+  world_name: string;
 
-const Home = ({route, navigation}) => {
-  const user = useAtomValue(userAtom);
+  name: string;
+
+  character_job: string;
+
+  character_level: number;
+}
+
+interface IOnPress {
+  (item: IParty): void;
+}
+
+const notice = [
+  {
+    label: 1,
+  },
+  {
+    label: 2,
+  },
+];
+
+const Home = ({
+  navigation,
+}: {
+  route: any;
+  navigation: NativeStackNavigationProp<any, 'Home'>;
+}) => {
+  const user = useAtomValue<{info: any; player: Player}>(userAtom);
+
+  const theme = useTheme();
+
+  const styles = createStyles(theme);
 
   const {data} = useQuery({
     queryKey: ['partyList'],
     queryFn: partyApi.getList,
+    refetchInterval: 60000,
   });
 
-  console.log('user', user);
-
-  const onPress = useCallback(
-    item => {
-      if (user.player && Object.keys(user.player).length > 0) {
-        navigation.navigate('PartyDetailRoute', {
-          // screen: 'PartyDetailRoute',
-          item,
-        });
-      } else {
-        Alert.alert('캐릭터를 등록해주세요');
-      }
+  const {data: myParty} = useQuery({
+    queryKey: ['myParty', user.player.id],
+    queryFn: () => {
+      return partyApi.myParty({player_id: user.player.id});
     },
-    [user?.player, navigation],
-  );
+    enabled: !!user.player.id,
+  });
 
-  const renderItem = useCallback(
-    ({item}: {item: IParty}) => {
-      return (
-        <TouchableOpacity onPress={() => onPress(item)} style={styles.item}>
-          <View>
-            <CText bold color={colors.primary}>
-              {item.region}
-            </CText>
-            <View style={styles.divider} />
-            <CText color={colors.white}>{item.title}</CText>
-            <View style={styles.divider} />
-          </View>
-          <View style={styles.flexRow}>
-            <View style={styles.flexRow}>
-              <View style={styles.exp}>
-                <CText size={13} color={colors.white}>
-                  exp
-                </CText>
-                <CText size={13} color={colors.primary}>
-                  {item.exp_condition ? `${item.exp_condition} ↑` : '무관'}
-                </CText>
+  const ListEmptyComponent = useCallback(() => {
+    return (
+      <>
+        <View style={styles.characterContainer}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.popTo('InRoute', {
+                screen: 'MoreRoute',
+                params: {screen: 'Manage', params: {needRegister: true}},
+              })
+            }
+            style={styles.characterInfo}>
+            {Object.keys(user?.player).length === 0 ? (
+              <View style={[styles.flexRow, styles.gap10, styles.needRegister]}>
+                {/* <Image
+                  source={require('../../assets/kkk.jpg')}
+                  style={styles.avatar}
+                /> */}
+                <Icon
+                  name="person-circle-outline"
+                  color={theme.text}
+                  size={36}
+                />
+                <View style={styles.gap5}>
+                  {/* <View style={[styles.flexRow]}>
+                    <CText size={16} color={theme.gray}>
+                      {user?.player?.world_name}
+                    </CText>
+                    <CText size={16} color={theme.gray}>
+                      {user?.player?.character_job}
+                    </CText>
+                    <CText size={16} color={theme.gray}>
+                      {user?.player?.character_level}
+                    </CText>
+                  </View> */}
+                  <CText color={theme.text}>
+                    {/* {user?.player?.name} */}
+                    캐릭터 등록이 필요합니다.
+                  </CText>
+                </View>
               </View>
-              {/* <CText color={colors.white}>{item.exp_condition}</CText> */}
-            </View>
-            <View style={styles.flexRow}>
-              <View style={styles.level}>
-                <CText size={13} color={colors.white}>
-                  level
-                </CText>
-                <CText size={13} color={colors.primary}>
-                  {item.level_condition ? `${item.level_condition} ↑` : '무관'}
-                </CText>
-              </View>
-              {/* <CText color={colors.white}>{item.level_condition}</CText> */}
-            </View>
-            <View style={styles.playerCount}>
-              <CText color={colors.white} bold>
-                {item.player_count}명
+            ) : (
+              <PlayerItem user={user?.player} />
+            )}
+          </TouchableOpacity>
+        </View>
+        {/* <FlatList
+          data={notice}
+          renderItem={noticeRenderItem}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.noticeContainer}
+        /> */}
+        {myParty && myParty?.list?.length ? (
+          <>
+            <View style={styles.listContainer}>
+              <CText size={14} color={theme.gray}>
+                가입되어 있는 파티
               </CText>
+              <MyParty data={myParty?.list?.[0]} />
             </View>
+            <View style={styles.pv20} />
+          </>
+        ) : undefined}
+        <View style={styles.listContainer}>
+          <View style={[styles.flexRow, styles.between]}>
+            <CText size={14} color={theme.gray}>
+              파티 목록
+            </CText>
+            <CButton
+              title="더보기"
+              onPress={() =>
+                navigation.navigate('InRoute', {screen: 'PartyRoute'})
+              }
+            />
           </View>
-        </TouchableOpacity>
-      );
-    },
-    [onPress],
-  );
+          <PartyList
+            data={data?.list.filter((v: IParty, i: number) => i < 3)}
+          />
+        </View>
+      </>
+    );
+  }, [data?.list, user?.player, , theme, styles, navigation, myParty]);
 
   return (
-    <Screen name="파티 목록" side={() => Side(navigation)}>
-      <CText color={colors.white}>{user?.player?.name}</CText>
-      <View style={styles.container}>
-        {/* <CText bold size={24} color={colors.gray}>
-          가입한 파티
-        </CText> */}
-        <FlatList
-          contentContainerStyle={styles.list}
-          data={data?.list}
-          renderItem={renderItem}
-        />
-      </View>
-    </Screen>
+    // <Screen name="Memple">
+    <FlatList
+      data={null}
+      renderItem={null}
+      ListEmptyComponent={ListEmptyComponent}
+      contentContainerStyle={styles.container}
+    />
+    // </Screen>
   );
 };
 
 export default Home;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingVertical: 20,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-  },
-  text: {
-    fontSize: 20,
-  },
-  list: {
-    paddingVertical: 20,
-    gap: 10,
-  },
-  item: {
-    padding: 10,
-    gap: 10,
-    // paddingVertical: 20,
-    backgroundColor: colors.inputBackground,
-    borderRadius: 10,
-  },
-  flexRow: {
-    flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
-  },
-  exp: {
-    flexDirection: 'row',
-    gap: 5,
-    backgroundColor: colors.darkNavy,
-    padding: 2,
-    paddingHorizontal: 5,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  level: {
-    flexDirection: 'row',
-    gap: 5,
-    backgroundColor: colors.darkNavy,
-    padding: 2,
-    paddingHorizontal: 5,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  divider: {
-    paddingVertical: 3,
-  },
-  playerCount: {
-    marginLeft: 'auto',
-  },
-  itemContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 5,
-    backgroundColor: colors.buttonBackground,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const createStyles = (theme: any) => {
+  return StyleSheet.create({
+    container: {
+      // flex: 1,
+      // paddingVertical: 20,
+      // justifyContent: 'center',
+      // alignItems: 'center',
+      // padding: 10,
+    },
+    pv20: {
+      paddingVertical: 20,
+    },
+    characterContainer: {
+      padding: 10,
+      // backgroundColor: theme.backgroundDarker,
+      borderRadius: 10,
+      // margin: 10,
+      paddingVertical: 30,
+    },
+    characterInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    button: {
+      backgroundColor: theme.backgroundDarker,
+      padding: 15,
+      borderRadius: 15,
+    },
+    listContainer: {
+      // backgroundColor: theme.backgroundDarker,
+      padding: 10,
+    },
+    flexRow: {
+      flexDirection: 'row',
+      gap: 3,
+      alignItems: 'center',
+    },
+
+    noticeContainer: {
+      paddingHorizontal: 10,
+    },
+    noticeItem: {
+      padding: 10,
+      backgroundColor: theme.backgroundDarker,
+      borderRadius: 10,
+      minWidth: 200,
+      height: 100,
+      margin: 5,
+    },
+    gap5: {
+      gap: 5,
+    },
+    gap10: {
+      gap: 10,
+    },
+    avatar: {
+      width: 50,
+      height: 50,
+      borderRadius: '50%',
+      resizeMode: 'cover',
+    },
+    needRegister: {
+      backgroundColor: theme.backgroundDarker,
+      padding: 10,
+      borderRadius: 10,
+      flex: 1,
+      // margin: 10,
+    },
+    between: {
+      justifyContent: 'space-between',
+    },
+  });
+};

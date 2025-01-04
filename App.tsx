@@ -13,14 +13,16 @@ import {SafeAreaView, StyleSheet, Text, TextInput} from 'react-native';
 import {colors} from './src/style';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {useSetAtom} from 'jotai';
-import {currentScreenAtom} from './src/store/screen/atom';
+import {useAtom, useAtomValue, useSetAtom} from 'jotai';
+import {
+  currentScreenAtom,
+  isVisibleBottomTabAtom,
+} from './src/store/screen/atom';
+import {useTheme} from './src/hooks/useTheme';
 
 const Stack = createNativeStackNavigator();
 
 function App(): React.JSX.Element {
-  const setCurrentScreen = useSetAtom(currentScreenAtom);
-
   // 사용자 설정에 상관없이 폰트사이즈 고정
 
   if ((Text as any).defaultProps == null) {
@@ -33,11 +35,18 @@ function App(): React.JSX.Element {
   }
   (TextInput as any).defaultProps.allowFontScaling = false;
 
+  const isVisibleBottomTab = useAtomValue(isVisibleBottomTabAtom);
+
+  console.log('isVisibleBottomTab', isVisibleBottomTab);
+
   const queryClient = new QueryClient();
+
+  const theme = useTheme();
+  const styles = createStyles(theme);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.topContainer}>
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
@@ -47,15 +56,29 @@ function App(): React.JSX.Element {
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>
+      <SafeAreaView
+        style={[
+          isVisibleBottomTab
+            ? styles.bottomContainer
+            : {backgroundColor: theme.background},
+        ]}
+      />
     </QueryClientProvider>
   );
 }
 
 export default App;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-});
+const createStyles = theme => {
+  const styles = StyleSheet.create({
+    topContainer: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    bottomContainer: {
+      // flex: 1,
+      backgroundColor: theme.bottomTabBg,
+    },
+  });
+  return styles;
+};

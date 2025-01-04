@@ -1,13 +1,13 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import Home from '../screens/in/Home';
+
 import {colors} from '../style';
 import PartyDetailRoute from './PartyDetailRoute';
 import AddParty from '../screens/in/party/AddParty';
-import {useTheme} from '../hooks/useTheme';
+import Party from '../screens/in/party/Party';
 
 type RootStackParamList = {
-  Home: undefined;
+  Party: undefined;
   PartyDetailRoute: {item: any};
   AddParty: undefined;
   // PartyDetailRoute: undefined;
@@ -15,27 +15,25 @@ type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const HomeRoute = () => {
-  const theme = useTheme();
-
+const PartyRoute = () => {
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        contentStyle: {backgroundColor: theme.background},
+        contentStyle: {backgroundColor: colors.dark.background},
       }}>
-      <Stack.Screen name="Home" component={Home} />
-      {/* <Stack.Screen
+      <Stack.Screen name="Party" component={Party} />
+      <Stack.Screen
         name="AddParty"
         component={AddParty}
         options={{
           presentation: 'modal',
           // animationMatchesGesture: true,
         }}
-      /> */}
-      {/* <Stack.Screen options={{}} name="PartyDetailRoute" component={PartyDetailRoute} /> */}
+      />
+      {/* <Stack.Screen name="PartyDetailRoute" component={PartyDetailRoute} /> */}
     </Stack.Navigator>
   );
 };
 
-export default HomeRoute;
+export default PartyRoute;

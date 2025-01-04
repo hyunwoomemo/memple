@@ -23,9 +23,9 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 const ResultItem = ({title, contents}: {title: string; contents: string}) => {
   return (
     <View style={styles.result}>
-      <CText color={colors.gray}>{title}</CText>
+      <CText color={colors.dark.gray}>{title}</CText>
       <View style={styles.resultContents}>
-        <CText color={colors.white}>{contents}</CText>
+        <CText color={colors.dark.white}>{contents}</CText>
       </View>
     </View>
   );
@@ -147,13 +147,13 @@ const Register = () => {
           <>
             {!playerData ? (
               <View style={[{flex: 1}, StyleSheet.absoluteFillObject]}>
-                <ActivityIndicator size={48} color={colors.darkRed} />
+                <ActivityIndicator size={48} color={colors.dark.darkRed} />
               </View>
             ) : (
               <View style={styles.registerContainer}>
                 {/* <View>
-          <CText color={colors.white}>직업</CText>
-          <CText color={colors.white}>{playerInfo.character_job_name}</CText>
+          <CText color={colors.dark.white}>직업</CText>
+          <CText color={colors.dark.white}>{playerInfo.character_job_name}</CText>
           </View> */}
                 <ResultItem
                   title={'직업'}
@@ -218,8 +218,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   resultContents: {
-    backgroundColor: colors.inputBackground,
-    color: colors.white,
+    backgroundColor: colors.dark.backgroundDarker,
+    color: colors.dark.white,
     borderRadius: 10,
     fontSize: 18,
     padding: 15,

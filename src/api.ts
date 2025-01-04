@@ -66,6 +66,9 @@ export const partyApi = {
   addParty: data => {
     return request.post('/party/add', data);
   },
+  myParty: ({player_id}) => {
+    return request.get(`/party/my/${player_id}`);
+  },
 };
 
 // 스카니아

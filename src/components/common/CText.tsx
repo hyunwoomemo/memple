@@ -26,7 +26,7 @@ export default CText;
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: 16,
+    fontSize: 14,
   },
   bold: {
     fontWeight: 'bold',

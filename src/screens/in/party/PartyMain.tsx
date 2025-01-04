@@ -12,6 +12,7 @@ import moment from 'moment';
 import 'moment/locale/ko'; // 한글 로케일을 불러옵니다.
 import {useAtom, useAtomValue} from 'jotai';
 import {userAtom} from '../../../store/user/atom';
+import {useTheme} from '../../../hooks/useTheme';
 
 moment.locale('ko'); // 로케일을 한글로 설정합니다.
 const PartyMain = ({
@@ -19,6 +20,9 @@ const PartyMain = ({
 }: {
   item: {id: number; title: string; description: string};
 }) => {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
   const [elapsedTime, setElapsedTime] = useState('');
   const user = useAtomValue(userAtom);
   const {socket} = useSocket();
@@ -60,6 +64,8 @@ const PartyMain = ({
     }
 
     const status = myData ? (myData.status === 1 ? 0 : 1) : 1;
+
+    console.log('user.player.id,', user.player.id, id, status);
 
     socket.emit('updateStatusParty', {
       player_id: user.player.id,
@@ -107,18 +113,18 @@ const PartyMain = ({
       <View style={styles.container}>
         <View style={styles.info}>
           <View style={styles.infoItem}>
-            <CText size={14} color={colors.gray}>
+            <CText size={14} color={theme.gray}>
               EXP
             </CText>
-            <CText bold color={colors.white}>
+            <CText bold color={theme.text}>
               95
             </CText>
           </View>
           <View style={styles.infoItem}>
-            <CText size={14} color={colors.gray}>
+            <CText size={14} color={theme.gray}>
               LEV
             </CText>
-            <CText bold color={colors.white}>
+            <CText bold color={theme.text}>
               220
             </CText>
           </View>
@@ -131,19 +137,19 @@ const PartyMain = ({
                 return (
                   <View key={v.ocid} style={styles.player}>
                     <View style={styles.flexRow}>
-                      <CText color={colors.white}>{v.name}</CText>
-                      <CText color={colors.gray}>{v.character_job}</CText>
-                      <CText color={colors.gray}>Lv.{v.character_level}</CText>
-                      {/* <CText color={colors.primary}>{v.exp}</CText> */}
+                      <CText color={theme.text}>{v.name}</CText>
+                      <CText color={theme.gray}>{v.character_job}</CText>
+                      <CText color={theme.gray}>Lv.{v.character_level}</CText>
+                      {/* <CText color={theme.primary}>{v.exp}</CText> */}
                     </View>
                     <View style={styles.flexRow}>
-                      <CText size={14} color={colors.lightGreen}>
+                      <CText size={14} color={theme.lightGreen}>
                         혈반
                       </CText>
-                      <CText size={14} color={colors.lightGreen}>
+                      <CText size={14} color={theme.lightGreen}>
                         룬
                       </CText>
-                      <CText size={14} color={colors.darkGray}>
+                      <CText size={14} color={theme.darkGray}>
                         자석펫
                       </CText>
                     </View>
@@ -151,59 +157,59 @@ const PartyMain = ({
                 );
               })}
               {/* <View style={styles.flexRow}>
-                <CText color={colors.white}>♚</CText>
-                <CText color={colors.gray}>팬텀</CText>
-                <CText color={colors.white}>이쟌</CText>
-                <CText color={colors.white}>Lv.244</CText>
-                <CText color={colors.primary}>115</CText>
+                <CText color={theme.text}>♚</CText>
+                <CText color={theme.gray}>팬텀</CText>
+                <CText color={theme.text}>이쟌</CText>
+                <CText color={theme.text}>Lv.244</CText>
+                <CText color={theme.primary}>115</CText>
               </View> */}
             </View>
           </View>
           {/* <View style={styles.player}>
             <View style={styles.flexRow}>
-              <CText color={colors.gray}>블래스터</CText>
-              <CText color={colors.white}>블래</CText>
-              <CText color={colors.white}>Lv.247</CText>
-              <CText color={colors.primary}>121</CText>
+              <CText color={theme.gray}>블래스터</CText>
+              <CText color={theme.text}>블래</CText>
+              <CText color={theme.text}>Lv.247</CText>
+              <CText color={theme.primary}>121</CText>
             </View>
             <View style={styles.flexRow}>
-              <CText size={14} color={colors.lightGreen}>
+              <CText size={14} color={theme.lightGreen}>
                 혈반
               </CText>
-              <CText size={14} color={colors.darkGray}>
+              <CText size={14} color={theme.darkGray}>
                 룬
               </CText>
-              <CText size={14} color={colors.lightGreen}>
+              <CText size={14} color={theme.lightGreen}>
                 자석펫
               </CText>
             </View>
           </View>
           <View style={styles.player}>
             <View style={styles.flexRow}>
-              <CText color={colors.gray}>소울마스터</CText>
-              <CText color={colors.white}>인플루언서</CText>
-              <CText color={colors.white}>Lv.241</CText>
-              <CText color={colors.primary}>117</CText>
+              <CText color={theme.gray}>소울마스터</CText>
+              <CText color={theme.text}>인플루언서</CText>
+              <CText color={theme.text}>Lv.241</CText>
+              <CText color={theme.primary}>117</CText>
             </View>
             <View style={styles.flexRow}>
-              <CText size={14} color={colors.lightGreen}>
+              <CText size={14} color={theme.lightGreen}>
                 혈반
               </CText>
-              <CText size={14} color={colors.darkGray}>
+              <CText size={14} color={theme.darkGray}>
                 룬
               </CText>
-              <CText size={14} color={colors.darkGray}>
+              <CText size={14} color={theme.darkGray}>
                 자석펫
               </CText>
             </View>
           </View> */}
         </View>
         <ScrollView contentContainerStyle={styles.notice}>
-          <CText color={colors.white}>공지사항</CText>
+          <CText color={theme.text}>공지사항</CText>
           <View>{item.description}</View>
         </ScrollView>
       </View>
-      <View style={{marginVertical: 15}}>
+      <View style={{margin: 15}}>
         <CButton title={renderUdateStatusText} onPress={onPress} />
       </View>
     </>
@@ -212,68 +218,58 @@ const PartyMain = ({
 
 export default PartyMain;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // paddingTop: 20,
-  },
-  notice: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    // alignItems: 'center',
-    padding: 15,
-    marginVertical: 5,
-    // backgroundColor: colors.inputBackground,
-    borderRadius: 10,
-    minHeight: '200%',
-  },
-  players: {
-    // flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
-    paddingVertical: 15,
-    marginVertical: 5,
-    gap: 10,
-    // backgroundC olor: colors.inputBackground,
-    borderRadius: 10,
-  },
-  player: {
-    flexDirection: 'row',
-    width: '100%',
-    // flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 10,
-    padding: 5,
-    // marginVertical: 5,
-    // backgroundColor: colors.inputBackground,
-    borderRadius: 10,
-  },
-  flexRow: {
-    flexDirection: 'row',
-    gap: 5,
-    alignItems: 'center',
-  },
-  gap5: {
-    gap: 5,
-  },
-  info: {
-    flexDirection: 'row',
-    // justifyContent: 'space-between',
-    alignItems: 'center',
-    // padding: 10,
-    paddingVertical: 10,
-    gap: 10,
-    marginVertical: 5,
-    // backgroundColor: colors.inputBackground,
-    borderRadius: 10,
-  },
-  infoItem: {
-    gap: 5,
-    padding: 10,
-    paddingHorizontal: 20,
-    backgroundColor: colors.inputBackground,
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-});
+const createStyles = (theme: any) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 10,
+    },
+    notice: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      padding: 15,
+      marginVertical: 5,
+      borderRadius: 10,
+      minHeight: '200%',
+    },
+    players: {
+      paddingVertical: 15,
+      marginVertical: 5,
+      gap: 10,
+      borderRadius: 10,
+    },
+    player: {
+      flexDirection: 'row',
+      width: '100%',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: 10,
+      padding: 5,
+      borderRadius: 10,
+    },
+    flexRow: {
+      flexDirection: 'row',
+      gap: 5,
+      alignItems: 'center',
+    },
+    gap5: {
+      gap: 5,
+    },
+    info: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 10,
+      gap: 10,
+      marginVertical: 5,
+      borderRadius: 10,
+    },
+    infoItem: {
+      gap: 5,
+      padding: 10,
+      paddingHorizontal: 20,
+      backgroundColor: theme.backgroundDarker,
+      alignItems: 'center',
+      borderRadius: 10,
+    },
+  });
+};
