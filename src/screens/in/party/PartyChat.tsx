@@ -25,48 +25,57 @@ const PartyChat = ({item}: {item: any}) => {
   const messages = useAtomValue(messagesAtom);
   const [text, setText] = useState('');
   const user = useAtomValue(userAtom);
-  console.log('useruser', user);
 
   const listRef = useRef(null);
+  const inputRef = useRef(null);
 
   const chatRender = useCallback(
     ({item}) => {
       return (
-        <View
-          style={[
-            styles.message,
-            item.player_id === user.player.id
-              ? {alignItems: 'flex-end'}
-              : {alignItems: 'flex-start'},
-          ]}>
-          {/* {item.player_id !== user.player.id && ( */}
-          {item.showName && <CText color={theme.gray}>{item.name}</CText>}
-          {/* )} */}
+        <>
+          {item.showFirstDate && (
+            <View style={styles.date}>
+              <View style={styles.dateItem}>
+                <CText>{item.showFirstDate}</CText>
+              </View>
+            </View>
+          )}
           <View
             style={[
-              globalStyles.flexRow,
+              styles.message,
               item.player_id === user.player.id
-                ? {flexDirection: 'row-reverse'}
-                : {flexDirection: 'row'},
+                ? {alignItems: 'flex-end'}
+                : {alignItems: 'flex-start'},
             ]}>
+            {/* {item.player_id !== user.player.id && ( */}
+            {item.showName && <CText color={theme.gray}>{item.name}</CText>}
+            {/* )} */}
             <View
               style={[
-                styles.contents,
-                // item.user_id === 1
-                //   ? {alignItems: 'flex-end'}
-                //   : {alignItems: 'flex-start'},
+                globalStyles.flexRow,
+                item.player_id === user.player.id
+                  ? {flexDirection: 'row-reverse'}
+                  : {flexDirection: 'row'},
               ]}>
-              <CText color={theme.text}>{item.contents}</CText>
-            </View>
-            {item.showTime && (
-              <View style={styles.created_at}>
-                <CText color={theme.gray} size={12}>
-                  {moment(item.created_at).format('a HH:mm')}
-                </CText>
+              <View
+                style={[
+                  styles.contents,
+                  // item.user_id === 1
+                  //   ? {alignItems: 'flex-end'}
+                  //   : {alignItems: 'flex-start'},
+                ]}>
+                <CText color={theme.text}>{item.contents}</CText>
               </View>
-            )}
+              {item.showTime && (
+                <View style={styles.created_at}>
+                  <CText color={theme.gray} size={12}>
+                    {moment(item.created_at).format('a HH:mm')}
+                  </CText>
+                </View>
+              )}
+            </View>
           </View>
-        </View>
+        </>
       );
     },
     [user, styles, theme],
@@ -98,8 +107,8 @@ const PartyChat = ({item}: {item: any}) => {
     <>
       <KeyboardAvoidingView
         style={styles.keyboardView}
-        keyboardVerticalOffset={150}
-        behavior={Platform.OS === 'ios' ? 'height' : undefined}>
+        keyboardVerticalOffset={170}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <FlatList
           ref={listRef}
           inverted
@@ -108,14 +117,16 @@ const PartyChat = ({item}: {item: any}) => {
           renderItem={chatRender}
         />
         <Input
+          ref={inputRef}
           value={text}
           onChangeText={onChangeText}
           onSubmitEditing={onSubmitEditing}
-          submitBehavior={'blurAndSubmit'}
+          // submitBehavior={'blurAndSubmit'}
           returnKeyType="send"
           returnKeyLabel="전송"
           enterKeyHint="send"
           placeholder="메시지를 입력하세요."
+          blurOnSubmit={false}
         />
       </KeyboardAvoidingView>
     </>
@@ -161,6 +172,22 @@ const createStyles = (theme: any) => {
     },
     created_at: {
       alignSelf: 'flex-end',
+    },
+    date: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      // paddingVertical: 10,
+      backgroundColor: theme.backgroundDarker,
+      padding: 5,
+      margin: 10,
+      borderRadius: 15,
+    },
+    dateItem: {
+      // backgroundColor: theme.backgroundDarker,
+      // padding: 5,
+      // paddingHorizontal: 50,
+      // borderRadius: 15,
+      // flex: 1,
     },
   });
 };

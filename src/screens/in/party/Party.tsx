@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   Alert,
   FlatList,
@@ -9,7 +9,7 @@ import {
 
 import {useQuery} from '@tanstack/react-query';
 
-import {useAtomValue} from 'jotai';
+import {useAtom, useAtomValue} from 'jotai';
 import {colors, globalStyles} from '../../../style';
 import CText from '../../../components/common/CText';
 import {userAtom} from '../../../store/user/atom';
@@ -18,6 +18,8 @@ import Screen from '../../../components/common/Screen';
 import PartyList from '../../../components/party/PartyList';
 import {useTheme} from '../../../hooks/useTheme';
 import Icon from '@react-native-vector-icons/ionicons';
+import {partyAtom} from '../../../store/party/atom';
+import {appAtom} from '../../../store/app/atom';
 
 interface IParty {
   channel: number;
@@ -37,16 +39,46 @@ interface IParty {
 const Party = ({navigation}) => {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const {data} = useQuery({
+
+  const [app, setApp] = useAtom(appAtom);
+  const [party, setParty] = useAtom(partyAtom);
+
+  const {data, isFetched} = useQuery({
     queryKey: ['partyList'],
     queryFn: partyApi.getList,
-    refetchInterval: 60000,
   });
+
+  useEffect(() => {
+    console.log('ddddsfmksdmfksmdkfmskdmfksm');
+    if (!isFetched) {
+      return;
+    }
+    setParty(prev => ({...prev, list: data?.list}));
+  }, [data]);
+
+  const FilterParty = useCallback(() => {
+    return (
+      <View style={styles.filterContainer}>
+        <CText>레벨</CText>
+        <CText>경험치</CText>
+      </View>
+    );
+  }, []);
 
   const Side = navigation => (
     <View style={globalStyles.flexRow}>
-      <TouchableOpacity style={styles.itemContainer}>
-        <Icon name="search" size={20} color={theme.text} />
+      <TouchableOpacity
+        style={styles.itemContainer}
+        onPress={() => {
+          setApp(prev => ({
+            ...prev,
+            bottomSheet: {
+              visible: true,
+              body: FilterParty,
+            },
+          }));
+        }}>
+        <Icon name="options-outline" size={20} color={theme.text} />
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => navigation.push('AddParty')}
@@ -60,11 +92,11 @@ const Party = ({navigation}) => {
     return (
       <>
         <View style={styles.listContainer}>
-          <PartyList data={data?.list} />
+          <PartyList data={party?.list} />
         </View>
       </>
     );
-  }, [data?.list]);
+  }, [party?.list]);
 
   return (
     <Screen name="파티 목록" side={() => Side(navigation)}>
@@ -97,6 +129,10 @@ const createStyles = theme => {
     listContainer: {
       padding: 10,
       paddingBottom: 30,
+    },
+    filterContainer: {
+      padding: 10,
+      minHeight: 300,
     },
   });
 };

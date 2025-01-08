@@ -1,11 +1,9 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {useSocket} from '../../../hooks/useSocket';
-import Screen from '../../../components/common/Screen';
-import {useRoute} from '@react-navigation/native';
-import {colors} from '../../../style';
+import {colors, globalStyles} from '../../../style';
 import CText from '../../../components/common/CText';
-import {useQuery} from '@tanstack/react-query';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {partyApi} from '../../../api';
 import CButton from '../../../components/common/CButton';
 import moment from 'moment';
@@ -13,6 +11,9 @@ import 'moment/locale/ko'; // 한글 로케일을 불러옵니다.
 import {useAtom, useAtomValue} from 'jotai';
 import {userAtom} from '../../../store/user/atom';
 import {useTheme} from '../../../hooks/useTheme';
+import Icon from '@react-native-vector-icons/ionicons';
+import PlayerItem from '../../../components/player/PlayerItem';
+import {appAtom} from '../../../store/app/atom';
 
 moment.locale('ko'); // 로케일을 한글로 설정합니다.
 const PartyMain = ({
@@ -23,24 +24,26 @@ const PartyMain = ({
   const theme = useTheme();
   const styles = createStyles(theme);
 
-  const [elapsedTime, setElapsedTime] = useState('');
   const user = useAtomValue(userAtom);
   const {socket} = useSocket();
   const {id, title} = item;
 
   const {data, isFetched} = useQuery({
-    queryKey: ['getPartyPlayer'],
+    queryKey: ['getPartyPlayer', id],
     queryFn: () => partyApi.getPartyPlayer({party_id: id}),
+    enabled: !!id,
   });
 
-  console.log('itemitemitem', data);
-  const isMember = useMemo(
-    () =>
-      isFetched &&
-      data.list &&
-      data.list.find((v: any) => v.player_id === user.player.id),
-    [data],
-  );
+  // const {data: parties, isRefetching} = useQuery({
+  //   queryKey: ['partyList'],
+  //   queryFn: partyApi.getList,
+  // });
+
+  //
+  //   'partyListpartyList',
+  //   isRefetching,
+  //   parties?.list?.[0]?.player_count,
+  // );
 
   const myData = useMemo(
     () =>
@@ -49,6 +52,7 @@ const PartyMain = ({
       data.list.find((v: any) => v.player_id === user.player.id),
     [data],
   );
+  const isMember = useMemo(() => myData?.status > -1, [myData]);
 
   useEffect(() => {
     if (!socket || !id) {
@@ -65,12 +69,11 @@ const PartyMain = ({
 
     const status = myData ? (myData.status === 1 ? 0 : 1) : 1;
 
-    console.log('user.player.id,', user.player.id, id, status);
-
     socket.emit('updateStatusParty', {
       player_id: user.player.id,
       party_id: id,
       status,
+      prevStatus: myData?.status,
     });
   }, [socket, id, myData]);
 
@@ -90,127 +93,101 @@ const PartyMain = ({
     return '외출';
   }, [myData, isMember]);
 
-  useEffect(() => {
-    if (myData?.status !== 0 || !myData?.updated_at) {
-      return setElapsedTime('');
+  const TagItem = useCallback(
+    ({type, data}) => {
+      return (
+        <View style={styles.tag}>
+          <CText color={theme.text}>{type}</CText>
+          <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
+            <CText color={theme.text}>{data}</CText>
+            {type === 'EXP' && (
+              <Icon size={16} name="arrow-up" color={theme.primary} />
+            )}
+          </View>
+        </View>
+      );
+    },
+    [theme, styles],
+  );
+
+  const Item = useCallback(({title, children}) => {
+    return (
+      <>
+        <View style={{paddingVertical: 20, paddingTop: 30}}>
+          <CText color={theme.gray}>{title}</CText>
+        </View>
+        <View
+          style={{
+            padding: 10,
+            borderRadius: 15,
+            gap: 40,
+          }}>
+          {children}
+        </View>
+      </>
+    );
+  }, []);
+
+  const levelCondition = useCallback((min, max) => {
+    if (min && max) {
+      return `${min} ~ ${max}`;
     }
 
-    const interval = setInterval(() => {
-      const duration = moment.duration(
-        moment().diff(moment(myData.updated_at)),
-      );
-      const hours = String(duration.hours()).padStart(2, '0');
-      const minutes = String(duration.minutes()).padStart(2, '0');
-      const seconds = String(duration.seconds()).padStart(2, '0');
-      setElapsedTime(`${hours}:${minutes}:${seconds}`);
-    }, 1000);
+    if (min && !max) {
+      return `${min} ~`;
+    }
 
-    return () => clearInterval(interval);
-  }, [myData]);
+    if (!min && max) {
+      return `~ ${max}`;
+    }
+
+    return;
+  }, []);
 
   return (
     <>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
+        {/* <CText size={20}>{item.region}</CText> */}
+        {/* <View style={styles.title}>
+          <CText>정보</CText>
+        </View> */}
         <View style={styles.info}>
-          <View style={styles.infoItem}>
-            <CText size={14} color={theme.gray}>
-              EXP
-            </CText>
-            <CText bold color={theme.text}>
-              95
-            </CText>
-          </View>
-          <View style={styles.infoItem}>
-            <CText size={14} color={theme.gray}>
-              LEV
-            </CText>
-            <CText bold color={theme.text}>
-              220
-            </CText>
-          </View>
+          <CText color={theme.text} bold size={16}>
+            {item.region}
+          </CText>
         </View>
-
-        <View style={styles.players}>
-          <View style={styles.player}>
-            <View style={styles.gap5}>
-              {data?.list.map(v => {
-                return (
-                  <View key={v.ocid} style={styles.player}>
-                    <View style={styles.flexRow}>
-                      <CText color={theme.text}>{v.name}</CText>
-                      <CText color={theme.gray}>{v.character_job}</CText>
-                      <CText color={theme.gray}>Lv.{v.character_level}</CText>
-                      {/* <CText color={theme.primary}>{v.exp}</CText> */}
-                    </View>
-                    <View style={styles.flexRow}>
-                      <CText size={14} color={theme.lightGreen}>
-                        혈반
-                      </CText>
-                      <CText size={14} color={theme.lightGreen}>
-                        룬
-                      </CText>
-                      <CText size={14} color={theme.darkGray}>
-                        자석펫
-                      </CText>
-                    </View>
-                  </View>
-                );
-              })}
-              {/* <View style={styles.flexRow}>
-                <CText color={theme.text}>♚</CText>
-                <CText color={theme.gray}>팬텀</CText>
-                <CText color={theme.text}>이쟌</CText>
-                <CText color={theme.text}>Lv.244</CText>
-                <CText color={theme.primary}>115</CText>
-              </View> */}
-            </View>
+        <View style={styles.tagContainer}>
+          <View style={globalStyles.flexRow}>
+            <TagItem type={'EXP'} data={item.exp_condition} />
           </View>
-          {/* <View style={styles.player}>
-            <View style={styles.flexRow}>
-              <CText color={theme.gray}>블래스터</CText>
-              <CText color={theme.text}>블래</CText>
-              <CText color={theme.text}>Lv.247</CText>
-              <CText color={theme.primary}>121</CText>
-            </View>
-            <View style={styles.flexRow}>
-              <CText size={14} color={theme.lightGreen}>
-                혈반
-              </CText>
-              <CText size={14} color={theme.darkGray}>
-                룬
-              </CText>
-              <CText size={14} color={theme.lightGreen}>
-                자석펫
-              </CText>
-            </View>
-          </View>
-          <View style={styles.player}>
-            <View style={styles.flexRow}>
-              <CText color={theme.gray}>소울마스터</CText>
-              <CText color={theme.text}>인플루언서</CText>
-              <CText color={theme.text}>Lv.241</CText>
-              <CText color={theme.primary}>117</CText>
-            </View>
-            <View style={styles.flexRow}>
-              <CText size={14} color={theme.lightGreen}>
-                혈반
-              </CText>
-              <CText size={14} color={theme.darkGray}>
-                룬
-              </CText>
-              <CText size={14} color={theme.darkGray}>
-                자석펫
-              </CText>
-            </View>
-          </View> */}
+          {levelCondition(item.min_level, item.max_level) && (
+            <TagItem
+              type={'LEVEL'}
+              data={`${levelCondition(item.min_level, item.max_level)}`}
+            />
+          )}
         </View>
-        <ScrollView contentContainerStyle={styles.notice}>
-          <CText color={theme.text}>공지사항</CText>
-          <View>{item.description}</View>
-        </ScrollView>
-      </View>
+        {data?.list?.length > 0 && (
+          <Item title={'파티원'}>
+            {data?.list.map(item => (
+              <PlayerItem
+                key={item.player_id}
+                data={item}
+                settings={false}
+                party={user.player.id === item.player_id}
+                partyId={id}
+              />
+            ))}
+          </Item>
+        )}
+        {item.description && (
+          <Item title={'소개글'}>
+            <CText color={theme.text}>{item.description}</CText>
+          </Item>
+        )}
+      </ScrollView>
       <View style={{margin: 15}}>
-        <CButton title={renderUdateStatusText} onPress={onPress} />
+        <CButton primary title={renderUdateStatusText} onPress={onPress} />
       </View>
     </>
   );
@@ -223,53 +200,31 @@ const createStyles = (theme: any) => {
     container: {
       flex: 1,
       padding: 10,
-    },
-    notice: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      padding: 15,
-      marginVertical: 5,
-      borderRadius: 10,
-      minHeight: '200%',
-    },
-    players: {
-      paddingVertical: 15,
-      marginVertical: 5,
-      gap: 10,
-      borderRadius: 10,
-    },
-    player: {
-      flexDirection: 'row',
-      width: '100%',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      gap: 10,
-      padding: 5,
-      borderRadius: 10,
-    },
-    flexRow: {
-      flexDirection: 'row',
-      gap: 5,
-      alignItems: 'center',
-    },
-    gap5: {
-      gap: 5,
+      // backgroundColor: theme.backgroundDarker,
+      paddingTop: 15,
     },
     info: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: 10,
-      gap: 10,
-      marginVertical: 5,
-      borderRadius: 10,
-    },
-    infoItem: {
-      gap: 5,
+      backgroundColor: theme.background,
       padding: 10,
-      paddingHorizontal: 20,
+      borderRadius: 15,
+    },
+    title: {
+      paddingVertical: 15,
+      paddingHorizontal: 10,
+    },
+    tagContainer: {
+      flexDirection: 'row',
+      // backgroundColor: theme.backgroundDarker,
+      gap: 10,
+      paddingVertical: 10,
+    },
+    tag: {
+      flexDirection: 'row',
       backgroundColor: theme.backgroundDarker,
-      alignItems: 'center',
+      padding: 10,
+      paddingHorizontal: 15,
       borderRadius: 10,
+      gap: 10,
     },
   });
 };

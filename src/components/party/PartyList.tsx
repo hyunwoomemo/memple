@@ -33,9 +33,12 @@ const PartyList: React.FC<PartyListProps> = ({data}) => {
 
   const styles = createStyles(theme);
 
-  const renderItem = useCallback(({item}: {item: IParty}) => {
-    return <PartyItem item={item} />;
-  }, []);
+  const renderItem = useCallback(
+    ({item}: {item: IParty}) => {
+      return <PartyItem item={item} />;
+    },
+    [data],
+  );
 
   return <FlatList style={styles.list} data={data} renderItem={renderItem} />;
 };

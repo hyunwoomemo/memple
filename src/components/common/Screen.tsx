@@ -21,9 +21,9 @@ const Screen: React.FC<{
   return (
     <View style={styles.container}>
       {back ? (
-        <View style={[styles.flexRow]}>
+        <View style={[styles.flexRow, styles.p10]}>
           <TouchableOpacity
-            style={{backgroundColor: '', padding: 10}}
+            style={{flex: 0, backgroundColor: ''}}
             onPress={() => navigation.goBack()}>
             {/* <CText color={theme.text} bold size={20}>
             </CText> */}
@@ -36,8 +36,6 @@ const Screen: React.FC<{
               </CText>
             </View>
           ) : undefined}
-          <View />
-          {side && side()}
         </View>
       ) : (
         <View style={[styles.flexRow, styles.p10]}>
@@ -67,11 +65,11 @@ const createStyles = theme => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      gap: 20,
+      // gap: 20,
       paddingVertical: 10,
     },
     title: {
-      flex: 1,
+      flex: 10,
       alignItems: 'center',
     },
     p10: {

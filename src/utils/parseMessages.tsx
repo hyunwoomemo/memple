@@ -15,6 +15,9 @@ export const parseMessages = messages => {
     //   moment(prev?.created_at).format('YYYY-MM-DD HH:mm') ===
     //   moment(item.created_at).format('YYYY-MM-DD HH:mm');
 
+    const isSameDate = (a, b) =>
+      moment(a?.created_at).format('YYYY-MM-DD') ===
+      moment(b?.created_at).format('YYYY-MM-DD');
     const isSameUser = (a, b) => a?.player_id === b?.player_id;
     const isSameTime = (a, b) =>
       moment(a?.created_at).format('YYYY-MM-DD HH:mm') ===
@@ -24,6 +27,9 @@ export const parseMessages = messages => {
       ...item,
       showName: !(isSameUser(prev, item) && isSameTime(prev, item)),
       showTime: !(isSameUser(next, item) && isSameTime(next, item)),
+      showFirstDate:
+        !isSameDate(prev, item) &&
+        moment(item?.created_at).format('YYYY년 MM월 DD일 dddd'),
     };
   });
 

@@ -19,6 +19,7 @@ import {userAtom} from '../../../store/user/atom';
 import {useTheme} from '../../../hooks/useTheme';
 import Icon from '@react-native-vector-icons/ionicons';
 import PlayerItem from '../../../components/player/PlayerItem';
+import {useSocket} from '../../../hooks/useSocket';
 
 const Manage = ({route, navigation}) => {
   const theme = useTheme();
@@ -30,36 +31,35 @@ const Manage = ({route, navigation}) => {
     queryFn: playerApi.myPlayers,
   });
 
-  const handleSelect = async (id, ocid, data) => {
-    console.log('select', id, ocid, data);
-    const res = await playerApi.select({id});
+  const {socket} = useSocket();
 
-    console.log('res', res);
+  const handleSelect = async (id, ocid, data) => {
+    const res = await playerApi.select({id});
 
     if (res.success) {
       setUser(prev => ({
         ...prev,
         player: data,
       }));
-      queryClient.invalidateQueries(['myParty']);
+      // queryClient.invalidateQueries(['myParty']);
+      // queryClient.invalidateQueries(['partyList']);
       queryClient.invalidateQueries(['myPlayers']);
 
+      socket?.disconnect();
+
       if (route?.params?.needRegister) {
-        navigation.navigate('InRoute', {
-          screen: 'HomeRoute',
-        });
+        navigation.goBack();
       }
     }
   };
 
   const renderItem = ({item}) => {
-    console.log('item', item);
     return (
       <>
         <TouchableOpacity
           onPress={() => handleSelect(item.id, item.ocid, item)}
           style={styles.item}>
-          <PlayerItem user={item} settings={false} />
+          <PlayerItem data={item} settings={false} />
           {item.status ? (
             <Icon
               name={'checkmark-circle-outline'}
@@ -75,8 +75,8 @@ const Manage = ({route, navigation}) => {
   return (
     <Screen name="캐릭터 관리" back>
       {isLoading ? (
-        <View style={StyleSheet.absoluteFillObject}>
-          <ActivityIndicator size={24} color={theme.darkRed} />
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator color={theme.primary} />
         </View>
       ) : data.list.length === 0 ? (
         <View>

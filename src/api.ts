@@ -2,7 +2,6 @@ import request from './axios';
 
 export const userApi = {
   kakaoLogin: data => {
-    console.log('ddad kakao', data);
     return request.post('/user/kakaoLogin', data);
   },
   getInfo: () => {
@@ -31,12 +30,6 @@ export const playerApi = {
   info: ({ocid}: {ocid: string}) => {
     return request.get(`/player/info/${ocid}`);
   },
-  // info: ({ocid}: {ocid: string}) => {
-  //   return request.nexonGet(`/maplestorym/v1/character/basic?ocid=${ocid}`);
-  // },
-  setInfo: data => {
-    return request.post('/player/setInfo', data);
-  },
   register: ({ocid, name, character_job, world_name}) => {
     return request.post('/player/register', {
       ocid,
@@ -63,8 +56,8 @@ export const partyApi = {
   getPartyPlayer: ({party_id}: {party_id: number}) => {
     return request.get(`/party/player/${party_id}`);
   },
-  addParty: data => {
-    return request.post('/party/add', data);
+  createParty: data => {
+    return request.post('/party/create', data);
   },
   myParty: ({player_id}) => {
     return request.get(`/party/my/${player_id}`);

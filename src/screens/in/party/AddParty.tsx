@@ -11,6 +11,8 @@ import {partyApi} from '../../../api';
 import {useAtom, useAtomValue} from 'jotai';
 import {userAtom} from '../../../store/user/atom';
 import {useQueryClient} from '@tanstack/react-query';
+import {appAtom} from '../../../store/app/atom';
+import {partyAtom} from '../../../store/party/atom';
 
 interface Values {
   title?: string;
@@ -22,10 +24,12 @@ interface Values {
   password?: number;
 }
 
-const AddParty = () => {
+const AddParty = ({navigation}) => {
   const [values, setValues] = useState<Values>({});
   const user = useAtomValue(userAtom);
   const queryClient = useQueryClient();
+  const [app, setApp] = useAtom(appAtom);
+  const [party, setParty] = useAtom(partyAtom);
 
   const handleChangeText = (type: keyof Values, value: string | number) => {
     if (type === 'minLevel') {
@@ -52,19 +56,25 @@ const AddParty = () => {
   };
 
   const handleAddParty = async () => {
-    const res = await partyApi.addParty({
+    const res = await partyApi.createParty({
       ...values,
       world_name: user.player.world,
       creator_id: user.player.id,
     });
+    console.log('rrr', res);
 
     if (res.success) {
-      queryClient.invalidateQueries('partyList');
+      await queryClient.invalidateQueries('partyList');
+      await queryClient.invalidateQueries('myParty');
+      setParty(prev => ({...prev, updatedAt: new Date()}));
+      navigation.goBack();
+    } else {
+      setApp(prev => ({...prev, error: res}));
     }
   };
 
   return (
-    <Screen name="파티 등록">
+    <Screen name="파티 등록" back>
       <KeyboardAwareScrollView contentContainerStyle={styles.container}>
         <Input
           type="underline"
@@ -149,7 +159,7 @@ export default AddParty;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    padding: 20,
     gap: 20,
   },
 });

@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   Alert,
   FlatList,
@@ -8,21 +8,23 @@ import {
   View,
 } from 'react-native';
 import Screen from '../../components/common/Screen';
-import {useQuery} from '@tanstack/react-query';
+import {useQueries, useQuery, useQueryClient} from '@tanstack/react-query';
 import {partyApi} from '../../api';
 import CText from '../../components/common/CText';
 import {colors, globalStyles} from '../../style';
-import {useAtomValue} from 'jotai';
+import {useAtom, useAtomValue} from 'jotai';
 import {userAtom} from '../../store/user/atom';
 import CButton from '../../components/common/CButton';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import PartyList from '../../components/party/PartyList';
 import {useTheme} from '../../hooks/useTheme';
 import Icon from '@react-native-vector-icons/ionicons';
 import MyParty from '../../components/home/MyParty';
 import PlayerItem from '../../components/player/PlayerItem';
-
+import {useSocket} from '../../hooks/useSocket';
+import Input from '../../components/common/Input';
+import {partyAtom} from '../../store/party/atom';
 interface IParty {
   channel: number;
   created_at: string;
@@ -48,19 +50,6 @@ interface Player {
   character_level: number;
 }
 
-interface IOnPress {
-  (item: IParty): void;
-}
-
-const notice = [
-  {
-    label: 1,
-  },
-  {
-    label: 2,
-  },
-];
-
 const Home = ({
   navigation,
 }: {
@@ -68,24 +57,48 @@ const Home = ({
   navigation: NativeStackNavigationProp<any, 'Home'>;
 }) => {
   const user = useAtomValue<{info: any; player: Player}>(userAtom);
+  const [party, setParty] = useAtom(partyAtom);
 
   const theme = useTheme();
 
   const styles = createStyles(theme);
 
-  const {data} = useQuery({
-    queryKey: ['partyList'],
-    queryFn: partyApi.getList,
-    refetchInterval: 60000,
+  const [
+    {data, isFetched, isRefetching},
+    {data: myParty, isFetched: isFetchedMyParty},
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ['partyList'],
+        queryFn: () => {
+          return partyApi.getList();
+        },
+        enabled: true,
+      },
+      {
+        queryKey: ['myParty', user?.player?.id, party?.updatedAt],
+        // queryKey: ['myParty', user.player.id],
+        queryFn: () => {
+          return partyApi.myParty({player_id: user?.player?.id});
+        },
+        enabled: !!user?.player?.id,
+      },
+    ],
   });
 
-  const {data: myParty} = useQuery({
-    queryKey: ['myParty', user.player.id],
-    queryFn: () => {
-      return partyApi.myParty({player_id: user.player.id});
-    },
-    enabled: !!user.player.id,
-  });
+  console.log('myParty', myParty);
+
+  useEffect(() => {
+    if (isFetched && data) {
+      setParty(prev => ({...prev, list: data.list}));
+    }
+  }, [data, isFetched]);
+
+  useEffect(() => {
+    if (isFetchedMyParty && myParty) {
+      setParty(prev => ({...prev, my: myParty.list}));
+    }
+  }, [isFetchedMyParty, myParty]);
 
   const ListEmptyComponent = useCallback(() => {
     return (
@@ -93,13 +106,12 @@ const Home = ({
         <View style={styles.characterContainer}>
           <TouchableOpacity
             onPress={() =>
-              navigation.popTo('InRoute', {
-                screen: 'MoreRoute',
-                params: {screen: 'Manage', params: {needRegister: true}},
+              navigation.push('Manage', {
+                needRegister: true,
               })
             }
             style={styles.characterInfo}>
-            {Object.keys(user?.player).length === 0 ? (
+            {!user?.player || Object.keys(user?.player).length === 0 ? (
               <View style={[styles.flexRow, styles.gap10, styles.needRegister]}>
                 {/* <Image
                   source={require('../../assets/kkk.jpg')}
@@ -129,7 +141,7 @@ const Home = ({
                 </View>
               </View>
             ) : (
-              <PlayerItem user={user?.player} />
+              <PlayerItem data={user?.player} />
             )}
           </TouchableOpacity>
         </View>
@@ -140,13 +152,13 @@ const Home = ({
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.noticeContainer}
         /> */}
-        {myParty && myParty?.list?.length ? (
+        {party.my?.length ? (
           <>
             <View style={styles.listContainer}>
-              <CText size={14} color={theme.gray}>
+              {/* <CText size={14} color={theme.gray}>
                 가입되어 있는 파티
-              </CText>
-              <MyParty data={myParty?.list?.[0]} />
+              </CText> */}
+              <MyParty data={party?.my?.[0]} />
             </View>
             <View style={styles.pv20} />
           </>
@@ -158,18 +170,25 @@ const Home = ({
             </CText>
             <CButton
               title="더보기"
-              onPress={() =>
-                navigation.navigate('InRoute', {screen: 'PartyRoute'})
+              onPress={
+                // () => navigation.navigate('InRoute', {screen: 'PartyRoute'})
+                () => setParty(prev => ({...prev, updatedAt: new Date()}))
               }
             />
           </View>
-          <PartyList
-            data={data?.list.filter((v: IParty, i: number) => i < 3)}
-          />
+          <PartyList data={party?.list?.filter((v, i) => i < 3)} />
         </View>
       </>
     );
-  }, [data?.list, user?.player, , theme, styles, navigation, myParty]);
+  }, [
+    data?.list,
+    user?.player,
+    theme,
+    styles,
+    navigation,
+    myParty,
+    isRefetching,
+  ]);
 
   return (
     // <Screen name="Memple">
@@ -193,9 +212,10 @@ const createStyles = (theme: any) => {
       // justifyContent: 'center',
       // alignItems: 'center',
       // padding: 10,
+      backgroundColor: theme.background,
     },
     pv20: {
-      paddingVertical: 20,
+      paddingVertical: 10,
     },
     characterContainer: {
       padding: 10,

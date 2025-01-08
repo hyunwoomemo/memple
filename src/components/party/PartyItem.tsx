@@ -21,12 +21,12 @@ interface IParty {
   player_count: number;
 }
 
-const PartyItem = ({item}) => {
+const PartyItem = ({item, my}) => {
   const user = useAtomValue(userAtom);
   const navigation = useNavigation<NavigationProp<any>>();
   const theme = useTheme();
 
-  const styles = createStyles(theme);
+  const styles = createStyles(theme, my);
   const onPress = useCallback(
     (item: IParty) => {
       if (user.player && Object.keys(user.player).length > 0) {
@@ -44,12 +44,30 @@ const PartyItem = ({item}) => {
     return;
   }
 
+  const levelCondition = useCallback((min, max) => {
+    if (min && max) {
+      return `${min} ~ ${max}`;
+    }
+
+    if (min && !max) {
+      return `${min} ~`;
+    }
+
+    if (!min && max) {
+      return `~ ${max}`;
+    }
+
+    return;
+  }, []);
+
   return (
     <TouchableOpacity onPress={() => onPress(item)} style={styles.item}>
       <View>
-        <CText color={theme.gray}>{item.region}</CText>
+        <CText color={my ? theme.white : theme.gray}>{item.region}</CText>
         <View style={styles.divider} />
-        <CText color={theme.text}>{item.title}</CText>
+        <CText color={my ? theme.white : theme.text} bold={my ? true : false}>
+          {item.title}
+        </CText>
         <View style={styles.divider} />
       </View>
       <View style={styles.flexRow}>
@@ -69,12 +87,14 @@ const PartyItem = ({item}) => {
               level
             </CText>
             <CText size={13} color={theme.text}>
-              {item.level_condition ? `${item.level_condition} ↑` : '무관'}
+              {levelCondition(item.min_level, item.max_level)
+                ? levelCondition(item.min_level, item.max_level)
+                : '무관'}
             </CText>
           </View>
         </View>
         <View style={styles.playerCount}>
-          <CText size={14} color={theme.text}>
+          <CText size={14} color={my ? theme.white : theme.text}>
             {item.player_count} / 6
           </CText>
         </View>
@@ -85,13 +105,13 @@ const PartyItem = ({item}) => {
 
 export default PartyItem;
 
-const createStyles = theme => {
+const createStyles = (theme, my) => {
   return StyleSheet.create({
     item: {
-      padding: 7,
-      gap: 7,
+      padding: 10,
+      gap: 10,
       // paddingVertical: 20,
-      backgroundColor: theme.backgroundDarker,
+      backgroundColor: my ? theme.primary : theme.backgroundDarker,
       borderRadius: 10,
       // shadowColor: theme.text,
       // shadowOffset: {

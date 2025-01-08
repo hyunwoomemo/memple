@@ -49,28 +49,12 @@ const Register = () => {
       world_name: values.server,
     });
 
-    console.log('getOcid', res);
-
     if (res?.ocid) {
-      console.log('next');
       setOcid(res?.ocid);
-      // setUser(prev => ({
-      //   ...prev,
-      //   info: {name: values.name, server: values.server},
-      // }));
-      // 스카니아
-      // 이쟌
       const playerInfo = await playerApi.info({ocid: res.ocid});
 
-      console.log('playerInfo', playerInfo);
       if (playerInfo) {
         setPlayerData(playerInfo.user);
-        // const setInfoRes = await playerApi.setInfo({
-        //   ...playerInfo,
-        //   ocid: res.ocid,
-        // });
-
-        // console.log('setInfoRessetInfoRes', setInfoRes);
       }
     } else {
       Alert.alert('캐릭터 정보를 찾을 수 없습니다.');
@@ -84,7 +68,7 @@ const Register = () => {
   //   enabled: !!ocid,
   // });
 
-  // console.log('playerInfo', playerInfo);
+  //
 
   const handleRegisterCharacter = async () => {
     if (!playerData) {
@@ -100,8 +84,6 @@ const Register = () => {
     });
 
     // setPlayerId(res);
-
-    console.log('rrr', res);
 
     if (res.success) {
       Alert.alert('등록되었습니다.');

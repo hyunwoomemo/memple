@@ -27,7 +27,7 @@ const MyParty = ({data}) => {
   const styles = createStyles(theme);
   return (
     <View style={styles.container}>
-      <PartyItem item={data} />
+      <PartyItem item={data} my />
     </View>
   );
 };

@@ -19,7 +19,7 @@ interface CustomBottomTabProps {
 
 const CustomBottomTab: React.FC<CustomBottomTabProps> = props => {
   const route = useRoute();
-  console.log('zxc', getFocusedRouteNameFromRoute(route));
+
   const theme = useTheme();
   const styles = createStyles(theme);
 

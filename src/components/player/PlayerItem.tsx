@@ -1,34 +1,78 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import CText from '../common/CText';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {useTheme} from '../../hooks/useTheme';
 import Icon from '@react-native-vector-icons/ionicons';
+import moment from 'moment';
+import {useSocket} from '../../hooks/useSocket';
+import {useAtomValue} from 'jotai';
+import {userAtom} from '../../store/user/atom';
+import FastImage from 'react-native-fast-image';
 
-const PlayerItem = ({user, settings = true}) => {
+const PlayerItem = ({data, settings = true, party, partyId}) => {
   const navigation = useNavigation<NavigationProp<any>>();
+  const [elapsedTime, setElapsedTime] = useState('');
+  const {socket} = useSocket();
+  const user = useAtomValue(userAtom);
 
   const theme = useTheme();
 
   const styles = createStyles(theme);
 
+  useEffect(() => {
+    if (data?.status !== 0 || !data?.updated_at) {
+      return setElapsedTime('');
+    }
+
+    const interval = setInterval(() => {
+      const duration = moment.duration(moment().diff(moment(data.updated_at)));
+      const hours = String(duration.hours()).padStart(2, '0');
+      const minutes = String(duration.minutes()).padStart(2, '0');
+      const seconds = String(duration.seconds()).padStart(2, '0');
+      setElapsedTime(`${hours}:${minutes}:${seconds}`);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [data]);
+
+  const handleOut = () => {
+    socket.emit('updateStatusParty', {
+      player_id: user.player.id,
+      party_id: partyId,
+      status: -1,
+    });
+  };
+
   return (
-    <>
-      <Image source={require('../../assets/kkk.jpg')} style={styles.avatar} />
+    <View
+      style={{
+        flexDirection: 'row',
+        gap: 10,
+        flex: 1,
+        alignItems: 'center',
+      }}>
+      {data?.character_job && (
+        <FastImage
+          source={{uri: `http://15.164.212.90:8000/${data?.image_url}`}}
+          style={styles.avatar}
+          resizeMode="cover"
+        />
+      )}
       <View style={styles.gap5}>
         <View style={[styles.flexRow]}>
           <CText size={14} color={theme.gray}>
-            {user?.world_name}
+            {data?.world_name}
           </CText>
           <CText size={14} color={theme.gray}>
-            {user?.character_job}
+            {data?.character_job}
           </CText>
           <CText size={14} color={theme.gray}>
-            {user?.character_level}
+            {data?.character_level}
           </CText>
         </View>
         <CText size={20} color={theme.text}>
-          {user?.name}
+          {data?.name}
         </CText>
       </View>
       <View style={{marginLeft: 'auto'}}>
@@ -36,12 +80,8 @@ const PlayerItem = ({user, settings = true}) => {
           <TouchableOpacity
             style={styles.button}
             onPress={() =>
-              navigation.popTo('InRoute', {
-                screen: 'MoreRoute',
-                params: {
-                  screen: 'Manage',
-                  params: {needRegister: true},
-                },
+              navigation.push('Manage', {
+                needRegister: true,
               })
             }>
             <Icon name="settings-outline" size={20} color={theme.text} />
@@ -52,7 +92,14 @@ const PlayerItem = ({user, settings = true}) => {
           </TouchableOpacity>
         )}
       </View>
-    </>
+      {elapsedTime && <CText color={theme.text}>{elapsedTime}</CText>}
+      {party && (
+        <TouchableOpacity onPress={handleOut} style={styles.flexRow}>
+          <Icon color={theme.text} name="exit-outline" size={24} />
+          {/* <CButton title="탈퇴" /> */}
+        </TouchableOpacity>
+      )}
+    </View>
   );
 };
 

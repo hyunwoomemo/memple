@@ -8,7 +8,7 @@ const nexonAxios = axios.create({
 nexonAxios.interceptors.request.use(async config => {
   // 필요한 경우 요청 인터셉터 설정
   config.headers['x-nxopen-api-key'] = API_KEY;
-  console.log('ccconfig');
+
   return config;
 });
 

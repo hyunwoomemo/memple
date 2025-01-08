@@ -7,16 +7,25 @@ import {useTheme} from '../../hooks/useTheme';
 interface CButtonProps {
   title: string;
   onPress: () => void;
+  primary?: boolean;
 }
 
-const CButton: React.FC<CButtonProps> = ({title: title, onPress: onPress}) => {
+const CButton: React.FC<CButtonProps> = ({
+  title: title,
+  onPress: onPress,
+  primary,
+}) => {
   const theme = useTheme();
-  const styles = createStyles(theme);
+  const styles = createStyles(theme, primary);
 
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.button}>
-        <CText color={theme.text}>{title}</CText>
+        <CText
+          bold={primary ? true : false}
+          color={primary ? theme.white : theme.text}>
+          {title}
+        </CText>
       </View>
     </TouchableOpacity>
   );
@@ -24,10 +33,10 @@ const CButton: React.FC<CButtonProps> = ({title: title, onPress: onPress}) => {
 
 export default CButton;
 
-const createStyles = (theme: any) => {
+const createStyles = (theme: any, primary) => {
   return StyleSheet.create({
     button: {
-      backgroundColor: theme.backgroundDarker,
+      backgroundColor: primary ? theme.primary : theme.backgroundDarker,
       // padding: 15,
       borderRadius: 15,
       padding: 15,

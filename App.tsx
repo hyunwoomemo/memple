@@ -10,14 +10,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import RootRoute from './src/navigation/RootRoute';
 import {SafeAreaView, StyleSheet, Text, TextInput} from 'react-native';
-import {colors} from './src/style';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {useAtom, useAtomValue, useSetAtom} from 'jotai';
-import {
-  currentScreenAtom,
-  isVisibleBottomTabAtom,
-} from './src/store/screen/atom';
+import {useAtomValue} from 'jotai';
+import {isVisibleBottomTabAtom} from './src/store/screen/atom';
 import {useTheme} from './src/hooks/useTheme';
 
 const Stack = createNativeStackNavigator();
@@ -36,8 +31,6 @@ function App(): React.JSX.Element {
   (TextInput as any).defaultProps.allowFontScaling = false;
 
   const isVisibleBottomTab = useAtomValue(isVisibleBottomTabAtom);
-
-  console.log('isVisibleBottomTab', isVisibleBottomTab);
 
   const queryClient = new QueryClient();
 
@@ -69,7 +62,17 @@ function App(): React.JSX.Element {
 
 export default App;
 
-const createStyles = theme => {
+interface Theme {
+  background: string;
+  bottomTabBg: string;
+}
+
+interface Styles {
+  topContainer: object;
+  bottomContainer: object;
+}
+
+const createStyles = (theme: Theme): Styles => {
   const styles = StyleSheet.create({
     topContainer: {
       flex: 1,

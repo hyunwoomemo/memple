@@ -1,16 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {colors} from '../style';
 import CustomBottomTab from '../components/common/CustomBottomTab';
-import MyParty from '../screens/in/MyParty';
 import HomeRoute from './HomeRoute';
-import PartyDetailRoute from './PartyDetailRoute';
-import More from '../screens/in/More';
 import MoreRoute from './MoreRoute';
 import PartyRoute from './PartyRoute';
 import Icon from '@react-native-vector-icons/ionicons';
 import {useTheme} from '../hooks/useTheme';
+import {useSocket} from '../hooks/useSocket';
+import {useQueryClient} from '@tanstack/react-query';
+import {useAtomValue} from 'jotai';
+import {userAtom} from '../store/user/atom';
 
 type RootStackParamList = {
   HomeRoute: undefined;
@@ -27,6 +27,7 @@ const CustomTabBar = (props: any) => {
 
 const InRoute = ({route}) => {
   const theme = useTheme();
+
   return (
     <BottomTab.Navigator
       tabBar={CustomTabBar}
@@ -54,7 +55,7 @@ const InRoute = ({route}) => {
           tabBarLabel: '파티 목록',
           tabBarIcon: ({focused}) => (
             <Icon
-              name="people"
+              name="people-outline"
               size={24}
               color={focused ? theme.primary : theme.text}
             />
@@ -75,7 +76,6 @@ const InRoute = ({route}) => {
           ),
         }}
       />
-      {/* <BottomTab.Screen name="PartyDetailRoute" component={PartyDetailRoute} /> */}
     </BottomTab.Navigator>
   );
 };

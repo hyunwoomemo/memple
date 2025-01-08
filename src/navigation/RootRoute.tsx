@@ -1,23 +1,27 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, useColorScheme, View} from 'react-native';
+import {Alert, StyleSheet, Text, useColorScheme, View} from 'react-native';
 import InRoute from './InRoute';
 import OutRoute from './OutRoute';
 import {colors} from '../style';
 import {useAtom, useAtomValue, useSetAtom} from 'jotai';
 import {userAtom} from '../store/user/atom';
 import {playerApi, userApi} from '../api';
-import {useQuery} from '@tanstack/react-query';
-import {getStorage} from '../store/asyncStorage';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
+import {getStorage, removeStorage, setStorage} from '../store/asyncStorage';
 import PartyDetailRoute from './PartyDetailRoute';
-import {setTheme} from '../store/app/atom';
+import {appAtom, setTheme} from '../store/app/atom';
 import {useTheme} from '../hooks/useTheme';
+import {useSocket} from '../hooks/useSocket';
+import BottomSheet from '../components/common/BottomSheet';
 
 const Stack = createNativeStackNavigator();
 
 const RootRoute = () => {
   const systemTheme = useColorScheme();
   const setThemeAtom = useSetAtom(setTheme);
+  const [app, setApp] = useAtom(appAtom);
+  const [isVisible, setIsVisible] = useState(true);
 
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -25,25 +29,25 @@ const RootRoute = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useAtom(userAtom);
 
+  // removeStorage('token');
+
   useEffect(() => {
     const fetch = async () => {
       const token = await getStorage('token');
-      const theme = await getStorage('theme');
-      setThemeAtom(theme || systemTheme);
+      const storedTheme = await getStorage('theme');
+      setThemeAtom(storedTheme || systemTheme || '');
 
-      console.log('fetch');
       if (token) {
         const [userRes, playerRes] = await Promise.all([
           userApi.getInfo(),
           playerApi.selectedPlayer(),
         ]);
 
-        console.log('userRes', userRes);
+        console.log('userRes', userRes, playerRes);
 
         if (userRes.success) {
           if (playerRes.success) {
             setUser({info: userRes.user, player: playerRes.data});
-            console.log('player', playerRes);
           } else {
             setUser({info: userRes.user, player: {}});
           }
@@ -54,7 +58,13 @@ const RootRoute = () => {
     };
 
     fetch();
-  }, [setUser]);
+  }, [setUser, setThemeAtom, systemTheme]);
+
+  useEffect(() => {
+    if (app.error) {
+      Alert.alert(app.error.message);
+    }
+  }, [app]);
 
   return (
     <>
@@ -84,13 +94,25 @@ const RootRoute = () => {
           )}
         </Stack.Navigator>
       )}
+      {app.bottomSheet.visible && (
+        <BottomSheet
+          trigger={app.bottomSheet.visible}
+          setTrigger={() =>
+            setApp(prev => ({
+              ...prev,
+              bottomSheet: {visible: false, body: null},
+            }))
+          }>
+          {app.bottomSheet.body()}
+        </BottomSheet>
+      )}
     </>
   );
 };
 
 export default RootRoute;
 
-const createStyles = theme => {
+const createStyles = (theme: any) => {
   return StyleSheet.create({
     splash: {
       flex: 1,

@@ -18,8 +18,6 @@ const CustomSwitch = ({on, onPress}) => {
 
   const theme = useTheme();
 
-  console.log('theme', theme);
-
   const leftStyle = useAnimatedStyle(() => {
     return {
       left: leftValue.value,
