@@ -33,13 +33,6 @@ const PartyChat = ({item}: {item: any}) => {
     ({item}) => {
       return (
         <>
-          {item.showFirstDate && (
-            <View style={styles.date}>
-              <View style={styles.dateItem}>
-                <CText>{item.showFirstDate}</CText>
-              </View>
-            </View>
-          )}
           <View
             style={[
               styles.message,
@@ -75,6 +68,13 @@ const PartyChat = ({item}: {item: any}) => {
               )}
             </View>
           </View>
+          {item.showFirstDate && (
+            <View style={styles.date}>
+              <View style={styles.dateItem}>
+                <CText>{item.showFirstDate}</CText>
+              </View>
+            </View>
+          )}
         </>
       );
     },

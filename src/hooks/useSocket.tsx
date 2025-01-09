@@ -134,6 +134,7 @@ export const useSocket = () => {
 
       socket.on('disconnect', e => {
         console.log('disconnect', e);
+        socket?.disconnect();
         socket = null;
       });
 
@@ -142,7 +143,7 @@ export const useSocket = () => {
         setApp(prev => ({...prev, error: error}));
       });
     }
-  }, [socket]);
+  }, []);
 
   return {socket};
 };

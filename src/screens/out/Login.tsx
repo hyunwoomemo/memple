@@ -55,7 +55,7 @@ const Login = ({navigation}) => {
 
       if (res.CODE === 'KRL000' || res.CODE === 'KL000') {
         setStorage('token', res.TOKEN.accessToken);
-        setStorage('refreshToken', res.TOKEN.refreshToken);
+        setStorage('refresh_token', res.TOKEN.refreshToken);
         setStorage('userId', String(res.DATA.info.user_id));
 
         playerApi.selectedPlayer().then(players => {

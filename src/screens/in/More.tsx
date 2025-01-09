@@ -54,7 +54,7 @@ const More = ({navigation}) => {
 
   const handleLogout = () => {
     removeStorage('token');
-    removeStorage('refreshToken');
+    removeStorage('refresh_token');
     removeStorage('userId');
     setUser({info: {}, player: {}});
   };

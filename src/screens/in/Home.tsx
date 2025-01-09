@@ -86,8 +86,6 @@ const Home = ({
     ],
   });
 
-  console.log('myParty', myParty);
-
   useEffect(() => {
     if (isFetched && data) {
       setParty(prev => ({...prev, list: data.list}));
