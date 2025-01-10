@@ -1,8 +1,9 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -20,6 +21,10 @@ import {useTheme} from '../../../hooks/useTheme';
 import Icon from '@react-native-vector-icons/ionicons';
 import {partyAtom} from '../../../store/party/atom';
 import {appAtom} from '../../../store/app/atom';
+import Slider from '../../../components/common/Slider';
+import Input from '../../../components/common/Input';
+import CButton from '../../../components/common/CButton';
+import {Text} from 'react-native';
 
 interface IParty {
   channel: number;
@@ -40,6 +45,9 @@ const Party = ({navigation}) => {
   const theme = useTheme();
   const styles = createStyles(theme);
 
+  const [values, setValues] = useState({});
+  const [filters, setFilters] = useState({});
+
   const [app, setApp] = useAtom(appAtom);
   const [party, setParty] = useAtom(partyAtom);
   const user = useAtomValue(userAtom);
@@ -56,14 +64,51 @@ const Party = ({navigation}) => {
     setParty(prev => ({...prev, list: data?.list}));
   }, [data]);
 
+  const handleChangeInput = (type, text) => {
+    setValues(prev => ({...prev, [type]: text}));
+  };
+
   const FilterParty = useCallback(() => {
     return (
       <View style={styles.filterContainer}>
         <CText>레벨</CText>
+        <TextInput
+          onChangeText={text => handleChangeInput('minLev', text)}
+          placeholder="최소"
+          placeholderTextColor={theme.gray}
+        />
+        <TextInput
+          onChangeText={text => handleChangeInput('maxLev', text)}
+          placeholder="최대"
+          placeholderTextColor={theme.gray}
+        />
         <CText>경험치</CText>
+        <TextInput
+          onChangeText={text => handleChangeInput('minExp', text)}
+          placeholder="최소"
+          placeholderTextColor={theme.gray}
+        />
+        <TextInput
+          onChangeText={text => handleChangeInput('maxExp', text)}
+          placeholder="최대"
+          placeholderTextColor={theme.gray}
+        />
+        <CButton
+          title="적용"
+          onPress={() => {
+            setApp(prev => ({
+              ...prev,
+              bottomSheet: {
+                visible: false,
+              },
+            }));
+
+            setFilters(values);
+          }}
+        />
       </View>
     );
-  }, []);
+  }, [values]);
 
   const Side = navigation => (
     <View style={globalStyles.flexRow}>
@@ -100,6 +145,7 @@ const Party = ({navigation}) => {
 
   return (
     <Screen name="파티 목록" side={() => Side(navigation)}>
+      {/* <Text>{JSON.stringify(filters)}</Text> */}
       <FlatList
         data={null}
         ListEmptyComponent={ListEmptyComponent}

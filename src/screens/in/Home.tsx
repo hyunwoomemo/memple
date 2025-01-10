@@ -195,6 +195,7 @@ const Home = ({
       renderItem={null}
       ListEmptyComponent={ListEmptyComponent}
       contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
     />
     // </Screen>
   );

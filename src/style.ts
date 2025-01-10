@@ -28,6 +28,8 @@ export const colors = {
     charcoal: '#1C1C1C',
     bottomTabBg: '#101010',
     borderColor: 'rgba(255,255,255,0.1)',
+    dim: 'rgba(12, 9, 25, 0.9)',
+    bottomSheet: 'rgb(46, 46, 47)',
   },
   light: {
     white: '#F5F5F5',
@@ -59,6 +61,8 @@ export const colors = {
     charcoal: '#1C1C1C',
     bottomTabBg: '#fff',
     borderColor: 'rgba(0,0,0,0.1)',
+    dim: 'gray',
+    bottomSheet: 'rgb(249,249,249)',
   },
 };
 

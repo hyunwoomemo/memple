@@ -19,19 +19,24 @@ import Input from '../../../components/common/Input';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import moment from 'moment';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {useTheme} from '../../../hooks/useTheme';
 
 const ResultItem = ({title, contents}: {title: string; contents: string}) => {
   return (
     <View style={styles.result}>
-      <CText color={colors.dark.gray}>{title}</CText>
+      <CText color={theme.gray}>{title}</CText>
       <View style={styles.resultContents}>
-        <CText color={colors.dark.white}>{contents}</CText>
+        <CText color={theme.white}>{contents}</CText>
       </View>
     </View>
   );
 };
 
 const Register = ({navigation}) => {
+  const theme = useTheme();
+
+  const styles = createStyle(theme);
+
   const [values, setValues] = React.useState({
     name: '',
     server: '',
@@ -132,13 +137,13 @@ const Register = ({navigation}) => {
           <>
             {!playerData ? (
               <View style={[{flex: 1}, StyleSheet.absoluteFillObject]}>
-                <ActivityIndicator size={48} color={colors.dark.darkRed} />
+                <ActivityIndicator size={48} color={theme.darkRed} />
               </View>
             ) : (
               <View style={styles.registerContainer}>
                 {/* <View>
-          <CText color={colors.dark.white}>직업</CText>
-          <CText color={colors.dark.white}>{playerInfo.character_job_name}</CText>
+          <CText color={theme.white}>직업</CText>
+          <CText color={theme.white}>{playerInfo.character_job_name}</CText>
           </View> */}
                 <ResultItem
                   title={'직업'}
@@ -179,45 +184,47 @@ const Register = ({navigation}) => {
 
 export default Register;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
-  },
-  inputWrapper: {
-    width: '100%',
-  },
-  buttonWrapper: {
-    width: '100%',
-    // alignItems: 'center',
-    padding: 15,
-    gap: 10,
-  },
-  registerContainer: {flex: 1},
-  result: {
-    gap: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  resultContents: {
-    backgroundColor: colors.dark.backgroundDarker,
-    color: colors.dark.white,
-    borderRadius: 10,
-    fontSize: 18,
-    padding: 15,
-    paddingVertical: 15,
-    margin: 10,
-    flex: 1,
-  },
-  registerBtn: {
-    marginTop: 'auto',
-    marginBottom: 20,
-  },
-  keyboardContainer: {
-    justifyContent: 'center',
-    flex: 1,
-  },
-});
+const createStyle = theme => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 20,
+    },
+    inputWrapper: {
+      width: '100%',
+    },
+    buttonWrapper: {
+      width: '100%',
+      // alignItems: 'center',
+      padding: 15,
+      gap: 10,
+    },
+    registerContainer: {flex: 1},
+    result: {
+      gap: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    resultContents: {
+      backgroundColor: theme.backgroundDarker,
+      color: theme.white,
+      borderRadius: 10,
+      fontSize: 18,
+      padding: 15,
+      paddingVertical: 15,
+      margin: 10,
+      flex: 1,
+    },
+    registerBtn: {
+      marginTop: 'auto',
+      marginBottom: 20,
+    },
+    keyboardContainer: {
+      justifyContent: 'center',
+      flex: 1,
+    },
+  });
+};
