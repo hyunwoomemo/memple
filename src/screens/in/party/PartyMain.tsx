@@ -26,7 +26,7 @@ const PartyMain = ({
 
   const user = useAtomValue(userAtom);
   const {socket} = useSocket();
-  const {id, title} = item;
+  const {id, title, creator_id} = item;
 
   const {data, isFetched} = useQuery({
     queryKey: ['getPartyPlayer', id],
@@ -176,6 +176,7 @@ const PartyMain = ({
                 settings={false}
                 party={user.player.id === item.player_id}
                 partyId={id}
+                creator={Number(creator_id) === item.player_id}
               />
             ))}
           </Item>

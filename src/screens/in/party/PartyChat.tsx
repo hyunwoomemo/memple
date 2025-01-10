@@ -5,6 +5,9 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Button,
+  TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import Screen from '../../../components/common/Screen';
 import Input from '../../../components/common/Input';
@@ -16,6 +19,7 @@ import {useSocket} from '../../../hooks/useSocket';
 import {userAtom} from '../../../store/user/atom';
 import moment from 'moment';
 import {useTheme} from '../../../hooks/useTheme';
+import Icon from '@react-native-vector-icons/ionicons';
 
 const PartyChat = ({item}: {item: any}) => {
   const theme = useTheme();
@@ -116,18 +120,46 @@ const PartyChat = ({item}: {item: any}) => {
           data={messages}
           renderItem={chatRender}
         />
-        <Input
-          ref={inputRef}
-          value={text}
-          onChangeText={onChangeText}
-          onSubmitEditing={onSubmitEditing}
-          // submitBehavior={'blurAndSubmit'}
-          returnKeyType="send"
-          returnKeyLabel="전송"
-          enterKeyHint="send"
-          placeholder="메시지를 입력하세요."
-          blurOnSubmit={false}
-        />
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: theme.backgroundDarker,
+            marginHorizontal: 10,
+            padding: 15,
+            // marginHorizontal: 20,
+            borderRadius: 15,
+          }}>
+          {/* <Input
+            style={{flex: 1}}
+            ref={inputRef}
+            value={text}
+            onChangeText={onChangeText}
+            onSubmitEditing={onSubmitEditing}
+            // submitBehavior={'blurAndSubmit'}
+            returnKeyType="send"
+            returnKeyLabel="전송"
+            enterKeyHint="send"
+            placeholder="메시지를 입력하세요."
+            blurOnSubmit={false}
+          /> */}
+          <TextInput
+            style={{flex: 1}}
+            ref={inputRef}
+            value={text}
+            onChangeText={onChangeText}
+            onSubmitEditing={onSubmitEditing}
+            // submitBehavior={'blurAndSubmit'}
+            returnKeyType="send"
+            returnKeyLabel="전송"
+            enterKeyHint="send"
+            placeholder="메시지를 입력하세요."
+            blurOnSubmit={false}
+          />
+          <TouchableOpacity onPress={onSubmitEditing}>
+            <Icon name="send" size={20} color={theme.primary} />
+          </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
     </>
   );

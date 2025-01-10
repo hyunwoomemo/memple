@@ -91,6 +91,10 @@ const createStyles = theme => {
       borderTopLeftRadius: 30,
       paddingTop: 10,
       marginTop: 10,
+      borderTopWidth: 1,
+      borderRightWidth: 1,
+      borderLeftWidth: 1,
+      borderColor: theme.borderColor,
       // flex: 1,
     },
     text: {

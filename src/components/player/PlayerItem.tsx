@@ -10,7 +10,7 @@ import {useAtomValue} from 'jotai';
 import {userAtom} from '../../store/user/atom';
 import FastImage from 'react-native-fast-image';
 
-const PlayerItem = ({data, settings = true, party, partyId}) => {
+const PlayerItem = ({data, settings = true, party, partyId, creator}) => {
   const navigation = useNavigation<NavigationProp<any>>();
   const [elapsedTime, setElapsedTime] = useState('');
   const {socket} = useSocket();
@@ -71,9 +71,12 @@ const PlayerItem = ({data, settings = true, party, partyId}) => {
             {data?.character_level}
           </CText>
         </View>
-        <CText size={20} color={theme.text}>
-          {data?.name}
-        </CText>
+        <View style={styles.nameContainer}>
+          {creator && <Icon name="flame-outline" color={'tomato'} size={20} />}
+          <CText size={20} color={theme.text}>
+            {data?.name}
+          </CText>
+        </View>
       </View>
       <View style={{marginLeft: 'auto'}}>
         {settings && (
@@ -176,6 +179,11 @@ const createStyles = (theme: any) => {
     },
     between: {
       justifyContent: 'space-between',
+    },
+    nameContainer: {
+      flexDirection: 'row',
+      gap: 5,
+      alignItems: 'center',
     },
   });
 };

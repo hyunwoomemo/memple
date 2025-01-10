@@ -27,6 +27,7 @@ export const colors = {
     lightNavy: '#1F2933',
     charcoal: '#1C1C1C',
     bottomTabBg: '#101010',
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   light: {
     white: '#F5F5F5',
@@ -57,6 +58,7 @@ export const colors = {
     lightNavy: '#1F2933',
     charcoal: '#1C1C1C',
     bottomTabBg: '#fff',
+    borderColor: 'rgba(0,0,0,0.1)',
   },
 };
 
