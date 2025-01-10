@@ -86,7 +86,7 @@ const createStyles = theme => {
       justifyContent: 'space-around',
       alignItems: 'center',
       // height: 60,
-      backgroundColor: theme.bottomTabBg,
+      // backgroundColor: theme.bottomTabBg,
       borderTopRightRadius: 30,
       borderTopLeftRadius: 30,
       paddingTop: 10,

@@ -40,7 +40,14 @@ const PartyList: React.FC<PartyListProps> = ({data}) => {
     [data],
   );
 
-  return <FlatList style={styles.list} data={data} renderItem={renderItem} />;
+  return (
+    <FlatList
+      showsVerticalScrollIndicator={false}
+      style={styles.list}
+      data={data}
+      renderItem={renderItem}
+    />
+  );
 };
 
 export default PartyList;

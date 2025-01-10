@@ -119,6 +119,7 @@ const PartyChat = ({item}: {item: any}) => {
           style={styles.list}
           data={messages}
           renderItem={chatRender}
+          showsVerticalScrollIndicator={false}
         />
         <View
           style={{
@@ -144,7 +145,7 @@ const PartyChat = ({item}: {item: any}) => {
             blurOnSubmit={false}
           /> */}
           <TextInput
-            style={{flex: 1}}
+            style={{flex: 1, color: theme.text}}
             ref={inputRef}
             value={text}
             onChangeText={onChangeText}

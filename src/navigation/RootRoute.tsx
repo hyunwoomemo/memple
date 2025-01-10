@@ -1,6 +1,13 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
-import {Alert, StyleSheet, Text, useColorScheme, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
 import InRoute from './InRoute';
 import OutRoute from './OutRoute';
 import {colors} from '../style';
@@ -94,18 +101,19 @@ const RootRoute = () => {
           )}
         </Stack.Navigator>
       )}
-      {app.bottomSheet.visible && (
-        <BottomSheet
-          trigger={app.bottomSheet.visible}
-          setTrigger={() =>
-            setApp(prev => ({
-              ...prev,
-              bottomSheet: {visible: false, body: null},
-            }))
-          }>
-          {app.bottomSheet.body()}
-        </BottomSheet>
-      )}
+      {/* {app.bottomSheet.visible && ( */}
+      <BottomSheet
+        trigger={app.bottomSheet.visible}
+        setTrigger={() =>
+          setApp(prev => ({
+            ...prev,
+            bottomSheet: {visible: false, body: null},
+          }))
+        }>
+        {app.bottomSheet.body && app.bottomSheet.body()}
+      </BottomSheet>
+
+      {/* )} */}
     </>
   );
 };

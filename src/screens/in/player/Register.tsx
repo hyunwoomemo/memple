@@ -21,7 +21,15 @@ import moment from 'moment';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useTheme} from '../../../hooks/useTheme';
 
-const ResultItem = ({title, contents}: {title: string; contents: string}) => {
+const ResultItem = ({
+  title,
+  contents,
+  styles,
+  theme,
+}: {
+  title: string;
+  contents: string;
+}) => {
   return (
     <View style={styles.result}>
       <CText color={theme.gray}>{title}</CText>
@@ -93,7 +101,7 @@ const Register = ({navigation}) => {
 
     if (res.success) {
       navigation.goBack();
-      queryClient.invalidateQueries(['my_players']);
+      queryClient.invalidateQueries(['myPlayers']);
       Alert.alert('등록되었습니다.');
     } else {
       Alert.alert('등록에 실패했습니다.');
@@ -148,15 +156,26 @@ const Register = ({navigation}) => {
                 <ResultItem
                   title={'직업'}
                   contents={playerData.character_job_name}
+                  styles={styles}
+                  theme={theme}
                 />
                 <ResultItem
                   title={'레벨'}
                   contents={playerData.character_level}
+                  styles={styles}
+                  theme={theme}
                 />
-                <ResultItem title={'서버'} contents={playerData.world_name} />
+                <ResultItem
+                  title={'서버'}
+                  contents={playerData.world_name}
+                  styles={styles}
+                  theme={theme}
+                />
                 <ResultItem
                   title={'이름'}
                   contents={playerData.character_name}
+                  styles={styles}
+                  theme={theme}
                 />
                 {/* <ResultItem
             title={'로그인'}
@@ -171,7 +190,11 @@ const Register = ({navigation}) => {
             )}
           /> */}
                 <View style={styles.registerBtn}>
-                  <CButton title="등록" onPress={handleRegisterCharacter} />
+                  <CButton
+                    primary
+                    title="등록"
+                    onPress={handleRegisterCharacter}
+                  />
                 </View>
               </View>
             )}
@@ -202,7 +225,7 @@ const createStyle = theme => {
       padding: 15,
       gap: 10,
     },
-    registerContainer: {flex: 1},
+    registerContainer: {flex: 1, padding: 10},
     result: {
       gap: 10,
       flexDirection: 'row',

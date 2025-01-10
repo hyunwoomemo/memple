@@ -165,6 +165,7 @@ const Manage = ({route, navigation}) => {
           data={data.list}
           keyExtractor={item => item.id.toString()}
           renderItem={({item}) => renderItem({item, handleSwipeStart})}
+          showsVerticalScrollIndicator={false}
         />
       )}
       {/* </GestureHandlerRootView> */}

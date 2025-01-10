@@ -151,6 +151,7 @@ const Party = ({navigation}) => {
         ListEmptyComponent={ListEmptyComponent}
         contentContainerStyle={styles.container}
         renderItem={null}
+        showsVerticalScrollIndicator={false}
       />
     </Screen>
   );
