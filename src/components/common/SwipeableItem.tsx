@@ -16,7 +16,7 @@ function RightAction(
   drag: SharedValue<number>,
   id,
   swipeableMethods,
-  refreshMyPlayers,
+  rightRenderItem,
 ) {
   console.log('id', swipeableMethods);
 
@@ -28,36 +28,17 @@ function RightAction(
 
   return (
     <Reanimated.View style={[styleAnimation, styles.rightAction]}>
-      <View style={styles.actionContainer}>
-        {/* <TouchableOpacity
-          onPress={() => {
-            console.log('sdfsdf');
-            playerApi.delete({player_id: id});
-          }}> */}
-        <IconButton
-          onPress={async () => {
-            console.log('sdfsdf');
-            const res = await playerApi.delete({player_id: id});
-
-            if (res.success) {
-              refreshMyPlayers();
-            }
-            swipeableMethods.close();
-          }}
-          name={'trash-bin'}
-          color={'tomato'}
-        />
-        {/* </TouchableOpacity> */}
-      </View>
+      {rightRenderItem()}
     </Reanimated.View>
   );
 }
 
-export default function SwiperItem({
+export default function SwipeableItem({
   children,
   handleSwipeStart,
   id,
   refreshMyPlayers,
+  rightRenderItem,
 }) {
   const swipeableRef = useRef<ReanimatedSwipeable | null>(null); // Ref to track the current swipeable
 
@@ -76,7 +57,7 @@ export default function SwiperItem({
         enableTrackpadTwoFingerGesture
         rightThreshold={20}
         renderRightActions={(prog, drag, swipeableMethods) =>
-          RightAction(prog, drag, id, swipeableMethods, refreshMyPlayers)
+          RightAction(prog, drag, id, swipeableMethods, rightRenderItem)
         }
         // onSwipeableOpen={e => console.log(e)}
         // onActivated={e => console.log(e)}

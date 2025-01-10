@@ -16,7 +16,7 @@ import {playerApi} from '../../../api';
 import {useAtom} from 'jotai';
 import {userAtom} from '../../../store/user/atom';
 import Input from '../../../components/common/Input';
-import {useQuery} from '@tanstack/react-query';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
 import moment from 'moment';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
@@ -31,7 +31,7 @@ const ResultItem = ({title, contents}: {title: string; contents: string}) => {
   );
 };
 
-const Register = () => {
+const Register = ({navigation}) => {
   const [values, setValues] = React.useState({
     name: '',
     server: '',
@@ -39,6 +39,7 @@ const Register = () => {
 
   const [ocid, setOcid] = useState('');
   const [playerData, setPlayerData] = useState({});
+  const queryClient = useQueryClient();
 
   const [user, setUser] = useAtom(userAtom);
   const [playerId, setPlayerId] = useState(-1);
@@ -86,6 +87,8 @@ const Register = () => {
     // setPlayerId(res);
 
     if (res.success) {
+      navigation.goBack();
+      queryClient.invalidateQueries(['my_players']);
       Alert.alert('등록되었습니다.');
     } else {
       Alert.alert('등록에 실패했습니다.');

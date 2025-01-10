@@ -61,12 +61,49 @@ const Manage = ({route, navigation}) => {
     }
   };
 
+  const rightRenderItem = ({player_id}) => {
+    const onPress = async () => {
+      try {
+        console.log('sdfsdf');
+        const res = await playerApi.delete({player_id});
+
+        if (res.success) {
+          refreshMyPlayers();
+        }
+      } catch (err) {
+      } finally {
+        swipeableRef.current.current.close();
+      }
+    };
+
+    return (
+      <View
+        style={
+          {
+            // height: '100%',
+            // width: '90%',
+            // justifyContent: 'center',
+            // alignItems: 'center',
+            // backgroundColor: theme.backgroundDarker,
+            // borderRadius: 15,
+            // marginLeft: 'auto',
+          }
+        }>
+        {/* <TouchableOpacity>
+          <Icon name="trash-bin" size={20} color={'tomato'} />
+        </TouchableOpacity> */}
+        <IconButton onPress={onPress} name={'trash-bin'} color={'tomato'} />
+      </View>
+    );
+  };
+
   const renderItem = ({item, handleSwipeStart}) => {
     return (
       <SwipeableItem
         handleSwipeStart={handleSwipeStart}
         id={item.id}
-        refreshMyPlayers={refreshMyPlayers}>
+        refreshMyPlayers={refreshMyPlayers}
+        rightRenderItem={() => rightRenderItem({player_id: item.id})}>
         <TouchableOpacity
           onPress={() => handleSelect(item.id, item.ocid, item)}
           style={styles.item}>
@@ -89,7 +126,12 @@ const Manage = ({route, navigation}) => {
   };
 
   const Side = () => {
-    return <IconButton name={'add-circle-outline'} />;
+    return (
+      <IconButton
+        onPress={() => navigation.navigate('Register')}
+        name={'add-circle-outline'}
+      />
+    );
   };
 
   const swipeableRef = useRef<{
