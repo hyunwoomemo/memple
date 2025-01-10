@@ -42,14 +42,14 @@ const Party = ({navigation}) => {
 
   const [app, setApp] = useAtom(appAtom);
   const [party, setParty] = useAtom(partyAtom);
+  const user = useAtomValue(userAtom);
 
   const {data, isFetched} = useQuery({
-    queryKey: ['partyList'],
-    queryFn: partyApi.getList,
+    queryKey: ['partyList', user.player.world_name],
+    queryFn: () => partyApi.getList({world: user.player.world_name}),
   });
 
   useEffect(() => {
-    console.log('ddddsfmksdmfksmdkfmskdmfksm');
     if (!isFetched) {
       return;
     }

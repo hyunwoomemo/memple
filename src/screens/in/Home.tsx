@@ -69,9 +69,9 @@ const Home = ({
   ] = useQueries({
     queries: [
       {
-        queryKey: ['partyList'],
+        queryKey: ['partyList', user.player.world_name],
         queryFn: () => {
-          return partyApi.getList();
+          return partyApi.getList({world: user.player.world_name});
         },
         enabled: true,
       },

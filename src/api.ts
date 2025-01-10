@@ -47,11 +47,14 @@ export const playerApi = {
   selectedPlayer: () => {
     return request.get('/player/selected');
   },
+  delete: ({player_id}) => {
+    return request.post('/player/delete', {player_id});
+  },
 };
 
 export const partyApi = {
-  getList: () => {
-    return request.get('/party/get');
+  getList: ({world}) => {
+    return request.get(`/party/get/${world}`);
   },
   getPartyPlayer: ({party_id}: {party_id: number}) => {
     return request.get(`/party/player/${party_id}`);

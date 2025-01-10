@@ -14,7 +14,7 @@ async function getToken() {
 }
 
 async function getRefreshToken() {
-  return await getStorage('refreshToken');
+  return await getStorage('refresh_token');
 }
 
 // 요청 인터셉터: 모든 요청에 대해 처리

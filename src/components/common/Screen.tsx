@@ -36,6 +36,7 @@ const Screen: React.FC<{
               </CText>
             </View>
           ) : undefined}
+          {side && side()}
         </View>
       ) : (
         <View style={[styles.flexRow, styles.p10]}>

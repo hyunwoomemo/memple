@@ -85,7 +85,7 @@ export const useSocket = () => {
             ...prev,
             list: [...prev.list].map(v => {
               if (v.id === data.data.party_id) {
-                return {...v, player_count: v.player_count - 1};
+                return data.data.updateParty;
               } else {
                 return v;
               }
@@ -112,7 +112,7 @@ export const useSocket = () => {
             ...prev,
             list: [...prev.list].map(v => {
               if (v.id === data.data.party_id) {
-                return {...v, player_count: v.player_count + 1};
+                return data.data.updateParty;
               } else {
                 return v;
               }
@@ -128,9 +128,9 @@ export const useSocket = () => {
         // }
       });
 
-      // socket.on('updateMyParty');
-
-      // socket.on('partyList', asnyc);
+      socket.on('updatePartyList', data => {
+        setParty(prev => ({...prev, list: data}));
+      });
 
       socket.on('disconnect', e => {
         console.log('disconnect', e);
